@@ -1,39 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>org.openmrs.module</groupId>
-        <artifactId>medicationmanagementui</artifactId>
-        <version>1.0-SNAPSHOT</version>
-    </parent>
+	<parent>
+		<groupId>org.openmrs.module</groupId>
+		<artifactId>medicationmanagementui</artifactId>
+		<version>1.0-SNAPSHOT</version>
+	</parent>
 
-    <artifactId>medicationmanagementui-omod</artifactId>
-    <packaging>jar</packaging>
-    <name>Medication Management UI OMOD</name>
-    <description>OMOD project for Medication Management UI</description>
+	<artifactId>medicationmanagementui-omod</artifactId>
+	<packaging>jar</packaging>
+	<name>Medication Management UI OMOD</name>
+	<description>OMOD project for Medication Management UI</description>
 
 	<dependencies>
 
-		<!-- 
-		Add other dependencies from parent's pom: 
-		<dependency> 
-			<groupId>org.other.library</groupId> 
-			<artifactId>library-name</artifactId> 
-		</dependency> 
-		-->
-		
+		<!-- Add other dependencies from parent's pom: <dependency> <groupId>org.other.library</groupId> 
+			<artifactId>library-name</artifactId> </dependency> -->
+
 		<!-- Begin OpenMRS modules -->
-		
+
 		<dependency>
 			<groupId>${project.parent.groupId}</groupId>
 			<artifactId>${project.parent.artifactId}-api</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
-		
-				
+
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>appui-omod</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>uicommons-omod</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>webservices.rest-omod</artifactId>
+		</dependency>
+
+
 		<!-- End OpenMRS modules -->
-		
+
 
 		<!-- Begin OpenMRS core -->
 
@@ -48,7 +59,7 @@
 			<artifactId>openmrs-web</artifactId>
 			<type>jar</type>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.openmrs.api</groupId>
 			<artifactId>openmrs-api</artifactId>
@@ -69,7 +80,7 @@
 			<type>pom</type>
 			<scope>test</scope>
 		</dependency>
-		
+
 		<!-- End OpenMRS core -->
 
 		<dependency>
@@ -243,7 +254,8 @@
 				</executions>
 				<configuration>
 					<jrubyVersion>1.7.10</jrubyVersion>
-					<execArgs>${project.build.directory}/rubygems/bin/compass compile ${basedir}/src/main/compass</execArgs>
+					<execArgs>${project.build.directory}/rubygems/bin/compass compile
+						${basedir}/src/main/compass</execArgs>
 				</configuration>
 			</plugin>
 		</plugins>
@@ -268,7 +280,8 @@
 						</executions>
 						<configuration>
 							<jrubyVersion>1.7.10</jrubyVersion>
-							<execArgs>${project.build.directory}/rubygems/bin/compass watch ${basedir}/src/main/compass</execArgs>
+							<execArgs>${project.build.directory}/rubygems/bin/compass watch
+								${basedir}/src/main/compass</execArgs>
 						</configuration>
 					</plugin>
 				</plugins>

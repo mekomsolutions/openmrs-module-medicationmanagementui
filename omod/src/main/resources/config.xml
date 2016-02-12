@@ -54,6 +54,13 @@
 		<file>messages_es.properties</file>
 	</messages>
 	<!-- /Internationalization -->
+	
+	
+	<!-- Privileges -->
+	<privilege>
+		<name>App: medicationmanagementui.medication</name>
+		<description>Able to access the Medication Management page</description>
+	</privilege>
 
 </module>
 

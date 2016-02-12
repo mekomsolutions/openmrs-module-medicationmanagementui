@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.openmrs.module</groupId>
@@ -14,7 +15,7 @@
 			<name>Mekom Solutions</name>
 		</developer>
 	</developers>
-	
+
 	<organization>
 		<name>OpenMRS</name>
 		<url>http://openmrs.org</url>
@@ -24,105 +25,29 @@
 		<developerConnection>http://mekomsolutions.com</developerConnection>
 		<url>https://github.com/mekomsolutions/openmrs-module-medicationmanagementui</url>
 	</scm>
-	
+
 	<properties>
-		<openMRSVersion>1.9.7</openMRSVersion>
+		<openMRSVersion>1.10.0</openMRSVersion>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<uiframeworkVersion>3.2</uiframeworkVersion>
-		<appframeworkVersion>2.1</appframeworkVersion>
-		<uicommonsVersion>1.3</uicommonsVersion>
-		<emrapiVersion>1.3</emrapiVersion>
-		<appuiVersion>1.0</appuiVersion>
+		<distro.groupId>org.openmrs.distro</distro.groupId>
+		<distro.artifactId>referenceapplication</distro.artifactId>
+		<distro.version>2.2</distro.version>
 	</properties>
+
 
 	<dependencyManagement>
 		<dependencies>
-
-			<!-- Begin OpenMRS modules -->
-
+			<!-- Importing versions from refapp distro -->
 			<dependency>
-				<groupId>org.openmrs.module</groupId>
-				<artifactId>uiframework-api</artifactId>
-				<version>${uiframeworkVersion}</version>
-				<scope>provided</scope>
-			</dependency>
-
-			<dependency>
-				<groupId>org.openmrs.module</groupId>
-				<artifactId>appframework-api</artifactId>
-				<version>${appframeworkVersion}</version>
-				<scope>provided</scope>
-			</dependency>
-
-			<dependency>
-				<groupId>org.openmrs.module</groupId>
-				<artifactId>emrapi-api-1.9</artifactId>
-				<version>${emrapiVersion}</version>
-				<scope>provided</scope>
-			</dependency>
-
-			<dependency>
-				<groupId>org.openmrs.module</groupId>
-				<artifactId>uicommons-api</artifactId>
-				<version>${uicommonsVersion}</version>
-				<scope>provided</scope>
-			</dependency>
-
-			<dependency>
-				<groupId>org.openmrs.module</groupId>
-				<artifactId>appui-api</artifactId>
-				<version>${appuiVersion}</version>
-				<scope>provided</scope>
-			</dependency>
-
-			<!-- End OpenMRS modules -->
-
-			<!-- Begin OpenMRS core -->
-			
-			<dependency>
-				<groupId>org.openmrs.api</groupId>
-				<artifactId>openmrs-api</artifactId>
-				<version>${openMRSVersion}</version>
-				<type>jar</type>
-				<scope>provided</scope>
-			</dependency>
-
-			<dependency>
-				<groupId>org.openmrs.web</groupId>
-				<artifactId>openmrs-web</artifactId>
-				<version>${openMRSVersion}</version>
-				<type>jar</type>
-				<scope>provided</scope>
-			</dependency>
-						
-			<dependency>
-				<groupId>org.openmrs.api</groupId>
-				<artifactId>openmrs-api</artifactId>
-				<version>${openMRSVersion}</version>
-				<type>test-jar</type>
-				<scope>test</scope>
-			</dependency>
-			
-			<dependency>
-				<groupId>org.openmrs.web</groupId>
-				<artifactId>openmrs-web</artifactId>
-				<version>${openMRSVersion}</version>
-				<type>test-jar</type>
-				<scope>test</scope>
-			</dependency>
-			
-			<dependency>
-				<groupId>org.openmrs.test</groupId>
-				<artifactId>openmrs-test</artifactId>
-				<version>${openMRSVersion}</version>
+				<groupId>${distro.groupId}</groupId>
+				<artifactId>${distro.artifactId}</artifactId>
+				<version>${distro.version}</version>
 				<type>pom</type>
-				<scope>test</scope>
+				<scope>import</scope>
 			</dependency>
-						
-			<!-- End OpenMRS core -->
 
-			<!-- we explicitly use version 3.2.10 since 3.2.11 has a bug which was giving us issues,
-         can probably remove this after next sass release -->
+			<!-- we explicitly use version 3.2.10 since 3.2.11 has a bug which was 
+				giving us issues, can probably remove this after next sass release -->
 			<dependency>
 				<groupId>rubygems</groupId>
 				<artifactId>sass</artifactId>
@@ -131,6 +56,46 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.openmrs.api</groupId>
+			<artifactId>openmrs-api</artifactId>
+			<type>jar</type>
+		</dependency>
+		<dependency>
+			<groupId>org.openmrs.web</groupId>
+			<artifactId>openmrs-web</artifactId>
+			<type>jar</type>
+		</dependency>
+		<dependency>
+			<groupId>org.openmrs.api</groupId>
+			<artifactId>openmrs-api</artifactId>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.openmrs.web</groupId>
+			<artifactId>openmrs-web</artifactId>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.openmrs.test</groupId>
+			<artifactId>openmrs-test</artifactId>
+			<type>pom</type>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>appframework-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>uiframework-api</artifactId>
+		</dependency>
+	</dependencies>
 
 	<build>
 		<pluginManagement>
@@ -176,8 +141,8 @@
 		</pluginRepository>
 	</pluginRepositories>
 
-  <modules>
-    <module>api</module>
-    <module>omod</module>
-  </modules>
+	<modules>
+		<module>api</module>
+		<module>omod</module>
+	</modules>
 </project>

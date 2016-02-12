@@ -1,0 +1,12 @@
+[
+    {
+        "id": "${project.parent.groupId}.${project.parent.artifactId}.medication",
+        "extensionPointId": "patientDashboard.overallActions",
+        "type": "link",
+        "label": "${project.parent.artifactId}.manage-medication",
+        "url": "medicationmanagementui/medication.page?patient={{patient.uuid}}",
+        "icon": "icon-link",
+        "order": 17,
+        "requiredPrivilege": "App: medicationmanagementui.medication"
+    }
+]
