@@ -2,6 +2,7 @@
     ui.decorateWith("appui", "standardEmrPage")
 
     ui.includeJavascript("uicommons", "angular.min.js")
+    ui.includeJavascript("medicationmanagementui", "medicationManagementUI.js")
 %>
 
 <script type="text/javascript">
@@ -14,10 +15,11 @@
 </script>
 
 
-<div ng-app>
+<div ng-app="MedicationManagementUI">
   <h1>Proof of concept page</h1>
   <p>Input a text in the box below and confirm that the text entered is displayed in real time next to 'Your text:'</p>
   <input type="text" ng-model="message">
   <p>Your text: {{message}}</p>
   <div style="margin-top:25px;">Patient ID is: ${patient.uuid}</div>
+  <mmui-orders></mmui-orders>
 </div>
