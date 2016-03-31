@@ -120,6 +120,9 @@
 				<directory>src/test/resources</directory>
 				<filtering>true</filtering>
 			</testResource>
+			<testResource>
+				<directory>src/test/webapp/resources</directory>
+			</testResource>
 		</testResources>
 
 		<pluginManagement>
@@ -258,6 +261,28 @@
 						${basedir}/src/main/compass</execArgs>
 				</configuration>
 			</plugin>
+
+			<plugin>
+				<groupId>com.github.searls</groupId>
+				<artifactId>jasmine-maven-plugin</artifactId>
+				<version>1.3.1.5</version>
+				<extensions>true</extensions>
+				<executions>
+					<execution>
+						<goals>
+							<goal>test</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<jsSrcDir>${project.basedir}/src/main/webapp/resources/scripts</jsSrcDir>
+					<jsTestSrcDir>${project.basedir}/src/test/webapp/resources/scripts</jsTestSrcDir>
+					<serverPort>7234</serverPort>
+					<skipTests>false</skipTests>
+				</configuration>
+			</plugin>
+
+
 		</plugins>
 	</build>
 
