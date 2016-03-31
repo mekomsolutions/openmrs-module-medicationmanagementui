@@ -31,7 +31,7 @@ public class MedicationPageController {
 
 		Map<String, Object> jsonConfig = new LinkedHashMap<String, Object>();
 		
-		// if visitUuid is provided in the url, retrieve the visit object and put it in the model
+		// if visitUUID is provided in the URL, retrieve the visit object and put it in the model
 		if (!(visitUuid == null || visitUuid == "" )) {
 			visit = visitService.getVisitByUuid(visitUuid);
 			jsonConfig.put("visit", convertToFull(visit));
