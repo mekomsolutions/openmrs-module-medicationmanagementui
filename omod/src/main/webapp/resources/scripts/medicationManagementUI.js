@@ -1,16 +1,23 @@
 angular.module('MedicationManagementUI', ['orderService', 'encounterService'])
 
+.controller('MMUIPageCtrl', ['$scope', '$filter',
+	function($scope, $filter) {
+
+	}
+	])
+
+
 .directive('mmuiOrders', function() {
 	return {
 		scope: {},
 		restrict: 'E',
 		templateUrl: 'templates/orders-list.page',
-		controller: 'MMUIOrdersCtrl'
+		controller: 'MMUIOrderListCtrl'
 
 	};
 })
 
-.controller('MMUIOrdersCtrl', ['$scope', '$filter', 'OrderService',
+.controller('MMUIOrderListCtrl', ['$scope', '$filter', 'OrderService',
 	function($scope, $filter, OrderService) {
 
 		$scope.loadExistingOrders = function() {
@@ -31,6 +38,7 @@ angular.module('MedicationManagementUI', ['orderService', 'encounterService'])
 		};
 
 		$scope.loadExistingOrders();
+		$scope.visit = OpenMRS.drugOrdersConfig.visit;
 
 	}
 	])
@@ -43,25 +51,25 @@ angular.module('MedicationManagementUI', ['orderService', 'encounterService'])
 		var visits = {};
 		var filtered = [];
 
-		if (orders.length == 0) {
-
-		} else if (visit != null ) {
-			for (var i = 0; i < orders.length; i++) {
-
-				var order;
-				order = orders[i];
-
+		if (orders.length > 0) {
+			orders.forEach(function(currentOrder, index) {
 				Encounter.get({
-					uuid: order.encounter.uuid
-				}).$promise.then( function (encounter) {
-					if (encounter.visit.uuid == visit && encounter.visit != null) {
-						order.visit = encounter.visit; 
-						filtered.push(order);	
+					uuid: currentOrder.encounter.uuid
+				}).$promise.then(function(encounter) {
+					if (encounter.visit != null) {
+						currentOrder.visit = encounter.visit;
 					}
-				})
-			};
-		} else {
-			return orders;
+
+					if (visit != null) {
+						if (currentOrder.visit != null && currentOrder.visit.uuid == visit) {
+							filtered.push(currentOrder);
+						}
+					} else {
+						filtered.push(currentOrder);
+					}
+				});
+
+			});
 		}
 
 		return filtered;
