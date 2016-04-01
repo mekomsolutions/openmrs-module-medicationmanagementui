@@ -2,9 +2,9 @@ angular.module('MedicationManagementUI', ['orderService', 'encounterService'])
 
 .controller('MMUIPageCtrl', ['$scope', '$filter',
 	function($scope, $filter) {
-
+		$scope.value = 4;
 	}
-	])
+])
 
 
 .directive('mmuiOrders', function() {
@@ -23,8 +23,8 @@ angular.module('MedicationManagementUI', ['orderService', 'encounterService'])
 
 		$scope.loadExistingOrders = function() {
 
-		$scope.allDrugOrders = [];
-		$scope.visit = OpenMRS.drugOrdersConfig.visit;
+			$scope.allDrugOrders = [];
+			$scope.visit = OpenMRS.drugOrdersConfig.visit;
 
 			OrderService.getOrders({
 				t: 'drugorder',
@@ -33,7 +33,7 @@ angular.module('MedicationManagementUI', ['orderService', 'encounterService'])
 				careSetting: '6f0c9a92-6f24-11e3-af88-005056821db0'
 			}).then(function(results) {
 				$scope.allDrugOrders = results;
-				
+
 				$scope.allDrugOrders.forEach(function(currentOrder, index) {
 					Encounter.get({
 						uuid: currentOrder.encounter.uuid
@@ -41,14 +41,16 @@ angular.module('MedicationManagementUI', ['orderService', 'encounterService'])
 						if (encounter.visit != null) {
 							currentOrder.visit = encounter.visit;
 						} else {
-							currentOrder.visit = {"uuid":""};
+							currentOrder.visit = {
+								"uuid": ""
+							};
 						}
 					});
-				});	
+				});
 			});
 		};
 
-		$scope.loadExistingOrders();	
-		
+		$scope.loadExistingOrders();
+
 	}
-	])
+])
