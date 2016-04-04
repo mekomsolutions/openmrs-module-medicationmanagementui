@@ -4,7 +4,7 @@ angular.module('MedicationManagementUI', ['orderService', 'encounterService'])
 	function($scope, $filter) {
 		$scope.value = 4;
 	}
-])
+	])
 
 
 .directive('mmuiOrders', function() {
@@ -17,23 +17,25 @@ angular.module('MedicationManagementUI', ['orderService', 'encounterService'])
 	};
 })
 
-.controller('MMUIOrderListCtrl', ['$scope', '$filter', 'OrderService', 'Encounter',
-	function($scope, $filter, OrderService, Encounter) {
+.controller('MMUIOrderListCtrl', ['$scope', '$filter', '$window', 'OrderService', 'Encounter',
+	function($scope, $filter, $window, OrderService, Encounter) {
 
 
 		$scope.loadExistingOrders = function() {
 
 			$scope.allDrugOrders = [];
-			$scope.visit = OpenMRS.drugOrdersConfig.visit;
+			$scope.config = $window.config;
+
+			var query = {};
 
 			OrderService.getOrders({
 				t: 'drugorder',
 				v: 'full',
-				patient: OpenMRS.drugOrdersConfig.patient.uuid,
+				patient: $scope.config.patient.uuid,
 				careSetting: '6f0c9a92-6f24-11e3-af88-005056821db0'
 			}).then(function(results) {
 				$scope.allDrugOrders = results;
-
+				
 				$scope.allDrugOrders.forEach(function(currentOrder, index) {
 					Encounter.get({
 						uuid: currentOrder.encounter.uuid
@@ -41,16 +43,14 @@ angular.module('MedicationManagementUI', ['orderService', 'encounterService'])
 						if (encounter.visit != null) {
 							currentOrder.visit = encounter.visit;
 						} else {
-							currentOrder.visit = {
-								"uuid": ""
-							};
+							currentOrder.visit = {"uuid":""};
 						}
 					});
-				});
+				});	
 			});
 		};
 
 		$scope.loadExistingOrders();
 
 	}
-])
+	])

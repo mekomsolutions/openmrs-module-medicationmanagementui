@@ -298,7 +298,6 @@
 							<preloadSource>${project.basedir}/src/test/webapp/provided/scripts/jquery-1.10.2.js</preloadSource>
 							<preloadSource>${project.basedir}/src/test/webapp/provided/scripts/underscore-min.js</preloadSource>
 							<preloadSource>${project.basedir}/src/test/webapp/provided/scripts/knockout-2.1.0.js</preloadSource>
-							
 						</preloadSources>
 						<webDriverClassName>org.openqa.selenium.phantomjs.PhantomJSDriver</webDriverClassName>
 						<webDriverCapabilities>
