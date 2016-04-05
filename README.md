@@ -1,2 +1,2 @@
 # openmrs-module-medicationmanagementui
-A UI layer to help care providers manage medication for patients
+Provides a UI for managing medications orders, dispenses and administrations within OpenMRS Reference Application.
