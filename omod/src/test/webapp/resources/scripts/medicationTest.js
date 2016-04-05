@@ -65,7 +65,7 @@ describe("Medication Management UI", function() {
 				return null;
 			});
 
-			// inject mock
+			// inject dependencies
 			inject(function(_$controller_, _$filter_, _$window_, _OrderService_, _Encounter_) {
 				$controller = _$controller_;
 				$filter = _$filter_;

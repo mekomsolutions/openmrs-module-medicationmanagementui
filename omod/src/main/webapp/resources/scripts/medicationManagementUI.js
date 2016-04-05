@@ -9,7 +9,7 @@ angular.module('MedicationManagementUI', ['orderService', 'encounterService'])
 	return {
 		scope: {},
 		restrict: 'E',
-		templateUrl: 'templates/orders-list.page',
+		templateUrl: 'templates/order-list.page',
 		controller: 'MMUIOrderListCtrl'
 	};
 })
