@@ -1,10 +1,8 @@
 angular.module('MedicationManagementUI', ['orderService', 'encounterService'])
 
-.controller('MMUIPageCtrl', ['$scope', '$filter',
-	function($scope, $filter) {
-		$scope.value = 4;
-	}
-	])
+.controller('MMUIPageCtrl', ['$scope', function($scope) {
+}
+])
 
 
 .directive('mmuiOrders', function() {
@@ -13,44 +11,35 @@ angular.module('MedicationManagementUI', ['orderService', 'encounterService'])
 		restrict: 'E',
 		templateUrl: 'templates/orders-list.page',
 		controller: 'MMUIOrderListCtrl'
-
 	};
 })
 
 .controller('MMUIOrderListCtrl', ['$scope', '$filter', '$window', 'OrderService', 'Encounter',
 	function($scope, $filter, $window, OrderService, Encounter) {
 
+		$scope.allDrugOrders = [];
+		$scope.config = $window.config;
 
-		$scope.loadExistingOrders = function() {
+		OrderService.getOrders({
+			t: 'drugorder',
+			v: 'full',
+			patient: $scope.config.patient.uuid,
+			careSetting: '6f0c9a92-6f24-11e3-af88-005056821db0'
+		}).then(function(results) {
+			$scope.allDrugOrders = results;
 
-			$scope.allDrugOrders = [];
-			$scope.config = $window.config;
-
-			var query = {};
-
-			OrderService.getOrders({
-				t: 'drugorder',
-				v: 'full',
-				patient: $scope.config.patient.uuid,
-				careSetting: '6f0c9a92-6f24-11e3-af88-005056821db0'
-			}).then(function(results) {
-				$scope.allDrugOrders = results;
-				
-				$scope.allDrugOrders.forEach(function(currentOrder, index) {
-					Encounter.get({
-						uuid: currentOrder.encounter.uuid
-					}).$promise.then(function(encounter) {
-						if (encounter.visit != null) {
-							currentOrder.visit = encounter.visit;
-						} else {
-							currentOrder.visit = {"uuid":""};
-						}
-					});
-				});	
-			});
-		};
-
-		$scope.loadExistingOrders();
+			$scope.allDrugOrders.forEach(function(currentOrder, index) {
+				Encounter.get({
+					uuid: currentOrder.encounter.uuid
+				}).$promise.then(function(encounter) {
+					if (encounter.visit != null) {
+						currentOrder.visit = encounter.visit;
+					} else {
+						currentOrder.visit = {"uuid":""};
+					}
+				});
+			});	
+		});
 
 	}
-	])
+	]);

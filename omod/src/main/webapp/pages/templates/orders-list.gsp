@@ -1,7 +1,6 @@
 <ul>
 	<h3 ng-show="config.visit">Orders (for visit {{config.visit.display}})</h3>
 	<h3 ng-hide="config.visit">Orders (for any visit)</h3>
-	<a ng-click="loadExistingOrders()">Refresh</a>
 
 	<li style="margin-top: 20px;" ng-repeat="order in allDrugOrders | filter:config.visit.uuid | orderBy:'dateActivated':true">
 		<div ng-hide="config.visit" style="">* Visit: {{order.visit.display}}</div>
