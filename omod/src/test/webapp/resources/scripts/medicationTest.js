@@ -13,13 +13,13 @@ describe("Medication Management UI", function() {
 		var $controller;
 		var createController;
 		var OrderService = {};
-		var Encounter = {};
+		var EncounterService = {};
 
 		beforeEach(function() {
 
 			// Provide will help us create fake implementations for our dependencies
 			module(function($provide) {
-				// Fake OrderService Implementation returning a promise
+				// Fake OrderService Implementation
 				$provide.value('OrderService', {
 					getOrders: function() {
 						return {
@@ -33,12 +33,12 @@ describe("Medication Management UI", function() {
 									}, {
 										name: "order2",
 										encounter: {
-											uuid: "123"
+											uuid: "456"
 										}
 									}, {
 										name: "order3",
 										encounter: {
-											uuid: "123"
+											uuid: "789"
 										}
 									}]
 								)
@@ -46,19 +46,25 @@ describe("Medication Management UI", function() {
 						};
 					}
 				});
-				// Fake Encounter implementation returning a resource
-				$provide.value('Encounter', {
-					get: function() {
+				// Fake EncounterService implementation
+				$provide.value('EncounterService', {
+					getEncounters: function() {
 						return {
-							$promise: {
-								then: function(callback) {
-									return callback({
+							then: function(callback) {
+								return callback(
+									[{
 										name: "encounter1",
 										uuid: "123"
-									})
-								}
+									}, {
+										name: "encounter2",
+										uuid: "456"
+									}, {
+										name: "encounter3",
+										uuid: "789"
+									}]
+								)
 							}
-						}
+						};
 					}
 
 				})
@@ -66,12 +72,11 @@ describe("Medication Management UI", function() {
 			});
 
 			// inject dependencies
-			inject(function(_$controller_, _$filter_, _$window_, _OrderService_, _Encounter_) {
+			inject(function(_$controller_, _$window_, _OrderService_, _EncounterService_) {
 				$controller = _$controller_;
-				$filter = _$filter_;
 				$window = _$window_;
 				OrderService = _OrderService_;
-				Encounter = _Encounter_;
+				EncounterService = _EncounterService_;
 
 				$window.config = {
 					patient: {
@@ -86,10 +91,9 @@ describe("Medication Management UI", function() {
 				createController = function() {
 					$controller('MMUIOrderListCtrl', {
 						$scope: $scope,
-						$filter: $filter,
 						$window: $window,
 						OrderService: OrderService,
-						Encounter: Encounter
+						EncounterService: EncounterService
 					})
 				};
 			});
@@ -114,20 +118,32 @@ describe("Medication Management UI", function() {
 
 		it("expect all drug orders to have the encounter's visit uuid (when provided)", function() {
 
-			// override the Encounter service for this specific test
-			inject(function(Encounter) {
-				Encounter.get = function() {
+			// override the EncounterService for this specific test
+			inject(function(EncounterService) {
+				EncounterService.getEncounters = function() {
 					return {
-						$promise: {
-							then: function(callback) {
-								return callback({
-									name: "encounter1",
+						then: function(callback) {
+							return callback(
+								[{
+									name: "encounter4",
 									uuid: "123",
 									visit: {
-										uuid: "123"
+										uuid: "ABC"
 									}
-								})
-							}
+								}, {
+									name: "encounter5",
+									uuid: "456",
+									visit: {
+										uuid: "DEF"
+									}
+								}, {
+									name: "encounter6",
+									uuid: "789",
+									visit: {
+										uuid: "GHI"
+									}
+								}]
+							)
 						}
 					}
 				}
@@ -135,9 +151,10 @@ describe("Medication Management UI", function() {
 
 			createController();
 
-			$scope.allDrugOrders.forEach(function(currentOrder, index) {
-				expect(currentOrder.visit.uuid).toBe("123");
-			})
+			expect($scope.allDrugOrders[0].visit.uuid).toBe("ABC");
+			expect($scope.allDrugOrders[1].visit.uuid).toBe("DEF");
+			expect($scope.allDrugOrders[2].visit.uuid).toBe("GHI");
+
 		});
 
 	})
