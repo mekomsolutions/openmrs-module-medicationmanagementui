@@ -41,42 +41,20 @@ describe("Medication Management UI", function() {
 											uuid: "789"
 										}
 									}]
-								)
+									)
 							}
 						};
 					}
 				});
-				// Fake EncounterService implementation
-				$provide.value('EncounterService', {
-					getEncounters: function() {
-						return {
-							then: function(callback) {
-								return callback(
-									[{
-										name: "encounter1",
-										uuid: "123"
-									}, {
-										name: "encounter2",
-										uuid: "456"
-									}, {
-										name: "encounter3",
-										uuid: "789"
-									}]
-								)
-							}
-						};
-					}
-
-				})
+				
 				return null;
 			});
 
 			// inject dependencies
-			inject(function(_$controller_, _$window_, _OrderService_, _EncounterService_) {
+			inject(function(_$controller_, _$window_, _OrderService_) {
 				$controller = _$controller_;
 				$window = _$window_;
 				OrderService = _OrderService_;
-				EncounterService = _EncounterService_;
 
 				$window.config = {
 					patient: {
@@ -92,8 +70,7 @@ describe("Medication Management UI", function() {
 					$controller('MMUIOrderListCtrl', {
 						$scope: $scope,
 						$window: $window,
-						OrderService: OrderService,
-						EncounterService: EncounterService
+						OrderService: OrderService
 					})
 				};
 			});
@@ -107,55 +84,59 @@ describe("Medication Management UI", function() {
 			expect($scope.allDrugOrders.length).toBe(3);
 		});
 
-		it('expect all drug orders to have a visit property (even empty)', function() {
-
-			createController();
-
-			$scope.allDrugOrders.forEach(function(currentOrder, index) {
-				expect(currentOrder.visit.uuid).not.toBeUndefined();
-			})
-		});
 
 		it("expect all drug orders to have the encounter's visit uuid (when provided)", function() {
 
-			// override the EncounterService for this specific test
-			inject(function(EncounterService) {
-				EncounterService.getEncounters = function() {
+			// override the OrderService for this specific test
+			inject(function(OrderService) {
+				OrderService.getOrders = function() {
 					return {
 						then: function(callback) {
 							return callback(
-								[{
-									name: "encounter4",
-									uuid: "123",
-									visit: {
-										uuid: "ABC"
+								[
+								{
+									name: "order1",
+									encounter: {
+										uuid: "123",
+										visit: {
+											uuid:"ABC"
+										}
+									},
+								}, 
+								{
+									name: "order2",
+									encounter: {
+										uuid: "456",
+										visit: {
+											uuid:"DEF"
+										}
 									}
-								}, {
-									name: "encounter5",
-									uuid: "456",
-									visit: {
-										uuid: "DEF"
+								},
+								{
+									name: "order3",
+									encounter: {
+										uuid: "789",
+										visit: {
+											uuid:"GHI"
+										}
 									}
-								}, {
-									name: "encounter6",
-									uuid: "789",
-									visit: {
-										uuid: "GHI"
-									}
-								}]
-							)
+								}
+								]
+								)
 						}
 					}
 				}
 			});
 
+
 			createController();
 
-			expect($scope.allDrugOrders[0].visit.uuid).toBe("ABC");
-			expect($scope.allDrugOrders[1].visit.uuid).toBe("DEF");
-			expect($scope.allDrugOrders[2].visit.uuid).toBe("GHI");
+			expect($scope.allDrugOrders[0].encounter.visit.uuid).toBe("ABC");
+			expect($scope.allDrugOrders[1].encounter.visit.uuid).toBe("DEF");
+			expect($scope.allDrugOrders[2].encounter.visit.uuid).toBe("GHI");
 
 		});
 
-	})
+	});
+
 });
