@@ -1,8 +1,10 @@
 package org.openmrs.module.medicationmanagementui.page.controller;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.openmrs.CareSetting;
 import org.openmrs.Patient;
 import org.openmrs.Visit;
 import org.openmrs.api.OrderService;
@@ -22,6 +24,7 @@ public class MedicationPageController {
 	
 	public void controller(@RequestParam("patient") Patient patient,
 			@RequestParam(value="visit", required=false) String visitUuid,
+			@RequestParam(value = "careSetting", required = false) CareSetting careSetting,
 			@SpringBean("orderService") OrderService orderService,
 			@SpringBean("visitService") VisitService visitService,
 			UiSessionContext sessionContext,
@@ -36,7 +39,15 @@ public class MedicationPageController {
 			visit = visitService.getVisitByUuid(visitUuid);
 			jsonConfig.put("visit", convertToFull(visit));
 		}
+
+		if (careSetting != null) {
+			jsonConfig.put("intialCareSetting", careSetting.getUuid());
+		}
+
 		
+		List<CareSetting> careSettings = orderService.getCareSettings(false);
+		jsonConfig.put("careSettings", convertToFull(careSettings));
+
 		jsonConfig.put("patient", convertToFull(patient));
 		jsonConfig.put("orderEncounterType", convertToFull(MedicationManagementUIConstants.ORDER_ENCOUNTER_TYPE_UUID));
 		
