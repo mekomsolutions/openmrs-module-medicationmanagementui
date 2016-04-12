@@ -1,0 +1,20 @@
+[
+  {
+    "id": "medication",
+    "label": "Medication Management UI",
+    "description": "Adds deeper integration of Medication",
+    "icon": "icon-medicine",
+    "order": -1,
+    "extensions": [
+      {
+        "appId": "medication",
+        "id": "${project.parent.groupId}.${project.parent.artifactId}.patientDashboard.secondColumnFragments.medicationWidget",
+        "extensionPointId": "patientDashboard.secondColumnFragments",
+        "extensionParams": {
+          "provider": "${project.parent.artifactId}",
+          "fragment": "medicationWidget"
+        }
+      }
+    ]
+  }
+]
