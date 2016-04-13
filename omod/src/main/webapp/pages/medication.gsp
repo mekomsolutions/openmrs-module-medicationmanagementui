@@ -136,7 +136,7 @@ ui.includeJavascript("uicommons", "services/encounterService.js")
 				</li>
 
 			</ul>
-
+<!--
 			<div  style="margin-top: 30px">
 				<a ng-click="showInactive=true" ng-hide="showInactive">Show discontinued and completed <i class="icon-info-sign"></i></a>
 				
@@ -144,6 +144,8 @@ ui.includeJavascript("uicommons", "services/encounterService.js")
 			<div ng-show="showInactive">
 
 			</div>
+
+			-->
 		</div>
 	</div>
 
