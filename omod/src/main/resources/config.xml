@@ -21,6 +21,11 @@
 		</require_module>
 	</require_modules>
 
+	<require_modules>
+		<require_module version="${orderentryuiVersion}">
+			org.openmrs.module.orderentryui
+		</require_module>
+	</require_modules>
 	
 	<!-- Module Activator -->
 	<activator>${project.parent.groupId}.${project.parent.artifactId}.MedicationManagementUIActivator</activator>
