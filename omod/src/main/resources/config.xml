@@ -19,9 +19,7 @@
 		<require_module version="${uiframeworkVersion}">
 			org.openmrs.module.uiframework
 		</require_module>
-	</require_modules>
-
-	<require_modules>
+		
 		<require_module version="${orderentryuiVersion}">
 			org.openmrs.module.orderentryui
 		</require_module>
