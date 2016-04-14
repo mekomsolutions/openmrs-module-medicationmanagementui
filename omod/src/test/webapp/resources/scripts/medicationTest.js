@@ -3,6 +3,7 @@ describe("Medication Management UI", function() {
 	beforeEach(function() {
 		// creating fake dependencies to instanciate our module
 		angular.module('orderService', []);
+		angular.module('drugOrders', []);
 
 		module('MedicationManagementUI');
 	});
@@ -12,8 +13,54 @@ describe("Medication Management UI", function() {
 		var $controller;
 		var createController;
 		var OrderService = {};
+		var results = [];
 
 		beforeEach(function() {
+
+			var results =
+			[{
+				name: "order1",
+				uuid: "AAA",
+				encounter: {
+					uuid: "123",
+					visit: {
+						uuid: "ABC"
+					}
+				},
+				previousOrder: {
+					uuid: "CCC"
+				}
+			}, {
+				name: "order2",
+				uuid: "BBB",
+				encounter: {
+					uuid: "456",
+					visit: {
+						uuid: "DEF"
+					}
+				},
+				previousOrder: null
+			}, {
+				name: "order3",
+				uuid: "CCC",
+				encounter: {
+					uuid: "789",
+					visit: {
+						uuid: "GHI"
+					}
+				},
+				previousOrder: {
+					uuid: "DDD"
+				}
+			}, {
+				name: "order4",
+				uuid: "DDD",
+				encounter: {
+					uuid: "987",
+					visit: null
+				},
+				previousOrder: null
+			}];
 
 			// Provide will help us create fake implementations for our dependencies
 			module(function($provide) {
@@ -22,59 +69,12 @@ describe("Medication Management UI", function() {
 					getOrders: function() {
 						return {
 							then: function(callback) {
-								return callback(
-									[{
-										name: "order1",
-										uuid:"AAA",
-										encounter: {
-											uuid: "123",
-											visit: {
-												uuid:"ABC"
-											}
-										},
-										previousOrder: {
-											uuid: "CCC"
-										}
-									},
-									{
-										name: "order2",
-										uuid:"BBB",
-										encounter: {
-											uuid: "456",
-											visit: {
-												uuid:"DEF"
-											}
-										},
-										previousOrder: null
-									},
-									{
-										name: "order3",
-										uuid:"CCC",
-										encounter: {
-											uuid: "789",
-											visit: {
-												uuid:"GHI"
-											}
-										},
-										previousOrder: {
-											uuid:"DDD"
-										}
-									},
-									{
-										name: "order4",
-										uuid:"DDD",
-										encounter: {
-											uuid: "987",
-											visit: null
-										},
-										previousOrder: null
-									}]
-									)
+								return callback(results)
 							}
 						};
 					}
 				});
-				
+
 				return null;
 			});
 
@@ -86,7 +86,8 @@ describe("Medication Management UI", function() {
 				$q = _$q_;
 				OrderService = _OrderService_;
 
-				$window.config = {
+				$window.OpenMRS = {};
+				$window.OpenMRS.drugOrdersConfig = {
 					patient: {
 						uuid: "123"
 					},
@@ -100,7 +101,7 @@ describe("Medication Management UI", function() {
 						$q: $q,
 						OrderService: OrderService
 					})
-
+					
 					// we resolve all promises
 					$scope.$apply();
 				};

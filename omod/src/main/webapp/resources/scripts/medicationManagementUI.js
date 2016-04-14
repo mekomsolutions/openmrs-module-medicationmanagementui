@@ -1,51 +1,63 @@
-angular.module('MedicationManagementUI', ['orderService'])
+angular.module('MedicationManagementUI', ['orderService','drugOrders'])
 
 .controller('MMUIPageCtrl', ['$scope', '$window', function($scope, $window) {
 
-	$scope.config = $window.config;
+	$scope.config = $window.OpenMRS.drugOrdersConfig;
 }])
 
-.controller('MMUIOrderListCtrl', ['$scope', '$window', '$q', 'OrderService',
-	function($scope, $window, $q, OrderService) {
+.controller('MMUIOrderListCtrl', ['$scope', '$window', '$q', 'OrderService', '$timeout',
+	function($scope, $window, $q, OrderService, $timeout) {
 
-		$scope.activeDrugOrders = [];
-		$scope.pastDrugOrders = [];
-		$scope.allDrugOrders = [];
-		
+		$scope.activeDrugOrders = {loading: true};
+		$scope.pastDrugOrders = {loading: true};;
+		$scope.allDrugOrders = {loading: true};;
+
+		// define a custom representation of an Order, so to retrieve the full encounter
+		customRep = 'custom:(action:ref,asNeeded:ref,asNeededCondition:ref,auditInfo:ref,autoExpireDate:ref,brandName:ref,careSetting:ref,commentToFulfiller:ref,concept:ref,dateActivated:ref,dateStopped:ref,dispenseAsWritten:ref,display:ref,dose:ref,doseUnits:ref,dosingInstructions:ref,dosingType:ref,drug:ref,duration:ref,durationUnits:ref,encounter:ref,frequency:ref,instructions:ref,numRefills:ref,orderNumber:ref,orderReason:ref,orderReasonNonCoded:ref,orderer:ref,patient:ref,previousOrder:ref,quantity:ref,quantityUnits:ref,route:ref,urgency:ref,uuid:ref,links:ref';
+
+		$scope.config = $window.OpenMRS.drugOrdersConfig;
+
 		$scope.promiseArray = [];
 
-		$scope.config = $window.config;
+		$scope.loadData = function() {
 
-		$scope.promiseArray.push(
-			OrderService.getOrders({
-				patient: $scope.config.patient.uuid,
-				t: 'drugorder',
-				v: 'custom:(uuid,previousOrder:ref,display,careSetting:ref,orderType,orderNumber,patient:ref,concept:ref,instructions:ref,dateActivated:ref,dateStopped:ref,encounter:full)',
-				careSetting: "6f0c9a92-6f24-11e3-af88-005056821db0",
-				status: 'active'
-			}).then(function(orders) {
-				$scope.activeDrugOrders = orders;
+			$scope.loading = true;
+
+			$scope.promiseArray.push(
+				OrderService.getOrders({
+					patient: $scope.config.patient.uuid,
+					t: 'drugorder',
+					v: customRep,
+					careSetting: "6f0c9a92-6f24-11e3-af88-005056821db0",
+					status: 'active'
+				}).then(function(orders) {
+					$scope.activeDrugOrders = getAsDrugOrders(orders);
+				})
+				);
+
+			$scope.promiseArray.push(
+				OrderService.getOrders({
+					patient: $scope.config.patient.uuid,
+					t: 'drugorder',
+					v: customRep,
+					careSetting: "6f0c9a92-6f24-11e3-af88-005056821db0",
+					status: 'inactive'
+				}).then(function(orders) {
+					$scope.pastDrugOrders = getAsDrugOrders(orders);
+				})
+				);
+
+
+			// We store all the promises in an array and apply logic when they are all resolved
+			$q.all($scope.promiseArray).then(function() {
+					$scope.allDrugOrders = $scope.activeDrugOrders.concat($scope.pastDrugOrders);
+					$scope.allDrugOrders = getRevisions($scope.allDrugOrders);
+
+					$scope.loading = false;				
 			})
-			);
+		}
 
-		$scope.promiseArray.push(
-			OrderService.getOrders({
-				patient: $scope.config.patient.uuid,
-				t: 'drugorder',
-				v: 'custom:(uuid,previousOrder:ref,display,careSetting:ref,orderType,orderNumber,patient:ref,concept:ref,instructions:ref,dateActivated:ref,dateStopped:ref,encounter:full)',
-				careSetting: "6f0c9a92-6f24-11e3-af88-005056821db0",
-				status: 'inactive'
-			}).then(function(orders) {
-				$scope.pastDrugOrders = orders;
-			})
-			);
-
-
-		// We store all the promises in an array and apply logic when they are all resolved
-		$q.all($scope.promiseArray).then(function() {
-			$scope.allDrugOrders = $scope.activeDrugOrders.concat($scope.pastDrugOrders);
-			$scope.allDrugOrders = getRevisions($scope.allDrugOrders);
-		})
+		$scope.loadData();
 
 
 		function getRevisions(orders) {
@@ -62,7 +74,6 @@ angular.module('MedicationManagementUI', ['orderService'])
 				var revisions = [];
 
 				while (order.uuid in ordersMap) {
-					debugger;
 					// order.previousOrder returns only a 'ref' to the previousOrder, not the 'full' object
 					// so we have to retrieve the complete object from the 'orders' list, based on its UUID
 					
@@ -77,16 +88,32 @@ angular.module('MedicationManagementUI', ['orderService'])
 				orders[index].revisions = revisions;
 
 			})
-
 			return orders;
-
 		}
-
 	}
 	])
 
-.controller('MMUIOrderTemplate', ['$scope',
-	function($scope) {
+.filter('active', function () {
+	return function (items, isActive) {
+
+		var itemsToReturn = [];
+
+		if (items === undefined) return itemsToReturn;
+
+		for (var i = 0; i < items.length ; i++) {
+			var item = items[i];
+			if (item.isActive() != null) {
+				if (item.isActive() == isActive) {
+					itemsToReturn.push(item);
+				}
+			} 		
+		}
+		return itemsToReturn;
+	}
+})
+
+.controller('MMUIOrderTemplate', ['$scope', '$filter',
+	function($scope, $filter) {
 
 
 		$scope.redirectToDispense = function(orderUuid) {
@@ -106,3 +133,10 @@ angular.module('MedicationManagementUI', ['orderService'])
 
 	}
 	]);
+
+function getAsDrugOrders(array) {
+	map = _.map(array, function(item) { 
+		item = new OpenMRS.DrugOrderModel(item);
+		return item  });
+	return map; 
+};
