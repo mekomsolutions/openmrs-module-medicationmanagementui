@@ -5,8 +5,8 @@ angular.module('MedicationManagementUI', ['orderService','drugOrders'])
 	$scope.config = $window.OpenMRS.drugOrdersConfig;
 }])
 
-.controller('MMUIOrderListCtrl', ['$scope', '$window', '$q', 'OrderService', '$timeout',
-	function($scope, $window, $q, OrderService, $timeout) {
+.controller('MMUIOrderListCtrl', ['$scope', '$window', '$q', 'OrderService', 'DrugOrderModelService',
+	function($scope, $window, $q, OrderService, DrugOrderModelService) {
 
 		$scope.activeDrugOrders = {loading: true};
 		$scope.pastDrugOrders = {loading: true};;
@@ -31,7 +31,7 @@ angular.module('MedicationManagementUI', ['orderService','drugOrders'])
 					careSetting: "6f0c9a92-6f24-11e3-af88-005056821db0",
 					status: 'active'
 				}).then(function(orders) {
-					$scope.activeDrugOrders = getAsDrugOrders(orders);
+					$scope.activeDrugOrders = DrugOrderModelService.wrapOrders(orders);
 				})
 				);
 
@@ -43,17 +43,17 @@ angular.module('MedicationManagementUI', ['orderService','drugOrders'])
 					careSetting: "6f0c9a92-6f24-11e3-af88-005056821db0",
 					status: 'inactive'
 				}).then(function(orders) {
-					$scope.pastDrugOrders = getAsDrugOrders(orders);
+					$scope.pastDrugOrders = DrugOrderModelService.wrapOrders(orders);
 				})
 				);
 
 
 			// We store all the promises in an array and apply logic when they are all resolved
 			$q.all($scope.promiseArray).then(function() {
-					$scope.allDrugOrders = $scope.activeDrugOrders.concat($scope.pastDrugOrders);
-					$scope.allDrugOrders = getRevisions($scope.allDrugOrders);
+				$scope.allDrugOrders = $scope.activeDrugOrders.concat($scope.pastDrugOrders);
+				$scope.allDrugOrders = getRevisions($scope.allDrugOrders);
 
-					$scope.loading = false;				
+				$scope.loading = false;				
 			})
 		}
 
@@ -132,11 +132,19 @@ angular.module('MedicationManagementUI', ['orderService','drugOrders'])
 		};
 
 	}
-	]);
+	])
 
-function getAsDrugOrders(array) {
-	map = _.map(array, function(item) { 
-		item = new OpenMRS.DrugOrderModel(item);
-		return item  });
-	return map; 
-};
+.factory('DrugOrderModelService', function(){
+
+	function wrapOrders (orders){
+
+		var map = {};
+		map = _.map(orders, function(item) { 
+			item = new OpenMRS.DrugOrderModel(item);
+			return item  
+		});		
+		return map;
+	};
+
+	return {wrapOrders:wrapOrders};
+});

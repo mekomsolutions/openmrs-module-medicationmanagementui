@@ -75,16 +75,25 @@ describe("Medication Management UI", function() {
 					}
 				});
 
+				// Fake DrugOrderModelService impl.
+				// Simply return the reslults, without being really wrapped
+				$provide.value('DrugOrderModelService', {
+					wrapOrders: function() {
+						return results;
+					}
+				});
+
 				return null;
 			});
 
 			// inject dependencies
-			inject(function(_$controller_, _$rootScope_, _$window_, _$q_, _OrderService_) {
+			inject(function(_$controller_, _$rootScope_, _$window_, _$q_, _OrderService_, _DrugOrderModelService_) {
 				$controller = _$controller_;
 				$scope = _$rootScope_;
 				$window = _$window_;
 				$q = _$q_;
 				OrderService = _OrderService_;
+				DrugOrderModelService = _DrugOrderModelService_;
 
 				$window.OpenMRS = {};
 				$window.OpenMRS.drugOrdersConfig = {
@@ -99,7 +108,8 @@ describe("Medication Management UI", function() {
 						$scope: $scope,
 						$window: $window,
 						$q: $q,
-						OrderService: OrderService
+						OrderService: OrderService,
+						DrugOrderModelService: DrugOrderModelService
 					})
 					
 					// we resolve all promises
