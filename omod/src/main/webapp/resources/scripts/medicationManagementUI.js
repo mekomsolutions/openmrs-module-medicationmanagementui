@@ -13,7 +13,7 @@ angular.module('MedicationManagementUI', ['orderService','drugOrders'])
 		$scope.allDrugOrders = {loading: true};;
 
 		// define a custom representation of an Order, so to retrieve the full encounter
-		customRep = 'custom:(action:ref,asNeeded:ref,asNeededCondition:ref,auditInfo:ref,autoExpireDate:ref,brandName:ref,careSetting:ref,commentToFulfiller:ref,concept:ref,dateActivated:ref,dateStopped:ref,dispenseAsWritten:ref,display:ref,dose:ref,doseUnits:ref,dosingInstructions:ref,dosingType:ref,drug:ref,duration:ref,durationUnits:ref,encounter:ref,frequency:ref,instructions:ref,numRefills:ref,orderNumber:ref,orderReason:ref,orderReasonNonCoded:ref,orderer:ref,patient:ref,previousOrder:ref,quantity:ref,quantityUnits:ref,route:ref,urgency:ref,uuid:ref,links:ref';
+		customRep = 'custom:(action:ref,asNeeded:ref,asNeededCondition:ref,auditInfo:ref,autoExpireDate:ref,brandName:ref,careSetting:ref,commentToFulfiller:ref,concept:ref,dateActivated:ref,dateStopped:ref,dispenseAsWritten:ref,display:ref,dose:ref,doseUnits:ref,dosingInstructions:ref,dosingType:ref,drug:ref,duration:ref,durationUnits:ref,encounter:full,frequency:ref,instructions:ref,numRefills:ref,orderNumber:ref,orderReason:ref,orderReasonNonCoded:ref,orderer:ref,patient:ref,previousOrder:ref,quantity:ref,quantityUnits:ref,route:ref,urgency:ref,uuid:ref,links:ref';
 
 		$scope.config = $window.OpenMRS.drugOrdersConfig;
 
@@ -96,7 +96,12 @@ angular.module('MedicationManagementUI', ['orderService','drugOrders'])
 .filter('active', function () {
 	return function (items, isActive) {
 
+		isActive = isActive || true;
 		var itemsToReturn = [];
+
+		if (typeof isActive === 'undefined') {
+			isActive = true;
+		}
 
 		if (items === undefined) return itemsToReturn;
 
@@ -104,6 +109,29 @@ angular.module('MedicationManagementUI', ['orderService','drugOrders'])
 			var item = items[i];
 			if (item.isActive() != null) {
 				if (item.isActive() == isActive) {
+					itemsToReturn.push(item);
+				}
+			} 		
+		}
+		return itemsToReturn;
+	}
+})
+
+.filter('visit', function () {
+	return function (items, visit) {
+
+		if (visit === null || typeof visit === 'undefined') {
+			return items
+		};
+
+		var itemsToReturn = [];
+
+		if (items === undefined) return itemsToReturn;
+
+		for (var i = 0; i < items.length ; i++) {
+			var item = items[i];
+			if (item.encounter.visit != null) {
+				if (item.encounter.visit.uuid == visit.uuid) {
 					itemsToReturn.push(item);
 				}
 			} 		

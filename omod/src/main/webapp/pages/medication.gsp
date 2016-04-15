@@ -37,8 +37,8 @@ ui.includeJavascript("medicationmanagementui", "medicationManagementUI.js")
 	window.OpenMRS = window.OpenMRS || {};
 	window.OpenMRS.drugOrdersConfig = ${ jsonConfig };
 
-
 </script>
+
 
 <div ng-app="MedicationManagementUI">
 
@@ -63,14 +63,18 @@ ui.includeJavascript("medicationmanagementui", "medicationManagementUI.js")
 			</div>
 			<div style="clear: both;"></div>
 			<div>
-				<button>
-					Add
+			<% if (context.hasPrivilege("App: orderentryui.drugOrders")) { %>
+            <a href="${ ui.pageLink("orderentryui", "drugOrders", [patientId: patient.id, patient: patient.id, returnUrl: ui.thisUrl()]) }">
+            <button>
+						Add
 					<i class="icon-plus-sign"></i>
 				</button>
-			</div>
+            </a>
+        <% } %>
+							</div>
 
 			<ul>
-				<li ng-repeat="order in allDrugOrders | filter:config.visit.uuid | active:true | orderBy:'dateActivated':true" style="margin-top: 20px;display: block; width:100%" >
+				<li ng-repeat="order in allDrugOrders | visit:config.visit | active | orderBy:'dateActivated':true" style="margin-top: 20px;display: block; width:100%" >
 
 					<div ng-controller="MMUIOrderTemplate">
 						<table  style="border-bottom: 3px solid #00463f;">
