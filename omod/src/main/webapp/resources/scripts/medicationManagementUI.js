@@ -1,4 +1,4 @@
-angular.module('MedicationManagementUI', ['orderService','drugOrders'])
+angular.module('MedicationManagementUI', ['orderService','drugOrders','session'])
 
 .controller('MMUIPageCtrl', ['$scope', '$window', function($scope, $window) {
 
@@ -16,6 +16,7 @@ angular.module('MedicationManagementUI', ['orderService','drugOrders'])
 		customRep = 'custom:(action:ref,asNeeded:ref,asNeededCondition:ref,auditInfo:ref,autoExpireDate:ref,brandName:ref,careSetting:ref,commentToFulfiller:ref,concept:ref,dateActivated:ref,dateStopped:ref,dispenseAsWritten:ref,display:ref,dose:ref,doseUnits:ref,dosingInstructions:ref,dosingType:ref,drug:ref,duration:ref,durationUnits:ref,encounter:full,frequency:ref,instructions:ref,numRefills:ref,orderNumber:ref,orderReason:ref,orderReasonNonCoded:ref,orderer:ref,patient:ref,previousOrder:ref,quantity:ref,quantityUnits:ref,route:ref,urgency:ref,uuid:ref,links:ref';
 
 		$scope.config = $window.OpenMRS.drugOrdersConfig;
+
 
 		$scope.promiseArray = [];
 
@@ -140,9 +141,15 @@ angular.module('MedicationManagementUI', ['orderService','drugOrders'])
 	}
 })
 
-.controller('MMUIOrderTemplate', ['$scope', '$filter',
-	function($scope, $filter) {
+.controller('MMUIOrderTemplate', ['$scope', '$window', '$filter','SessionInfo', 'OrderEntryService',
+	function($scope, $window, $filter,SessionInfo,OrderEntryService) {
 
+		$scope.config = $window.OpenMRS.drugOrdersConfig;
+
+		var orderContext = {};
+		SessionInfo.get().$promise.then(function(info) {
+			orderContext.provider = info.currentProvider;
+		});
 
 		$scope.redirectToDispense = function(orderUuid) {
 			console.log("should redirect to Dispense");
@@ -154,10 +161,29 @@ angular.module('MedicationManagementUI', ['orderService','drugOrders'])
 			console.log(orderUuid);
 		};
 
-		$scope.redirectToAdministration = function(orderUuid) {
-			console.log("should redirect to Revise");
-			console.log(orderUuid);
-		};
+		$scope.discontinueOrder = function(activeOrder) {
+			
+			var dcOrder = activeOrder.createDiscontinueOrder(orderContext);
+			var draftOrders = [];
+			draftOrders.push(dcOrder);
+
+			var encounterContext = {
+				patient: $scope.config.patient,
+				encounterType: $scope.config.drugOrderEncounterType,
+				location: null,
+				visit: $scope.config.visit
+			};
+
+			$scope.loading = true;
+			OrderEntryService.signAndSave({ draftOrders: draftOrders }, encounterContext)
+			.$promise.then(function(result) {
+				location.href = location.href;
+			}, function(errorResponse) {
+				emr.errorMessage(errorResponse.data.error.message);
+				$scope.loading = false;
+			});
+
+		}
 
 	}
 	])

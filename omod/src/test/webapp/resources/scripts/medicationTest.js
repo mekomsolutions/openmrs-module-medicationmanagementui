@@ -4,6 +4,7 @@ describe("Medication Management UI", function() {
 		// creating fake dependencies to instanciate our module
 		angular.module('orderService', []);
 		angular.module('drugOrders', []);
+		angular.module('session', []);
 
 		module('MedicationManagementUI');
 	});

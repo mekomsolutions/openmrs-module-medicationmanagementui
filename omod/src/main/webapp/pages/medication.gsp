@@ -63,15 +63,15 @@ ui.includeJavascript("medicationmanagementui", "medicationManagementUI.js")
 			</div>
 			<div style="clear: both;"></div>
 			<div>
-			<% if (context.hasPrivilege("App: orderentryui.drugOrders")) { %>
-            <a href="${ ui.pageLink("orderentryui", "drugOrders", [patientId: patient.id, patient: patient.id, returnUrl: ui.thisUrl()]) }">
-            <button>
+				<% if (context.hasPrivilege("App: orderentryui.drugOrders")) { %>
+				<a href="${ ui.pageLink("orderentryui", "drugOrders", [patientId: patient.id, patient: patient.id, returnUrl: ui.thisUrl()]) }">
+					<button>
 						Add
-					<i class="icon-plus-sign"></i>
-				</button>
-            </a>
-        <% } %>
-							</div>
+						<i class="icon-plus-sign"></i>
+					</button>
+				</a>
+				<% } %>
+			</div>
 
 			<ul>
 				<li ng-repeat="order in allDrugOrders | visit:config.visit | active | orderBy:'dateActivated':true" style="margin-top: 20px;display: block; width:100%" >
@@ -99,7 +99,8 @@ ui.includeJavascript("medicationmanagementui", "medicationManagementUI.js")
 											<i class="icon-external-link"></i>
 										</a>
 
-										<a title="Discontinue"><i class="icon-remove"></i></a>
+										<a ng-hide="loading" data="{{order}}" title="Discontinue" ng-click="discontinueOrder(order)"><i class="icon-remove"></i></a>
+										<span ng-show="loading"><img src="${ ui.resourceLink("uicommons", "images/spinner.gif") }" width="23px" /></span>
 									</div>
 								</td>
 							</tr>
