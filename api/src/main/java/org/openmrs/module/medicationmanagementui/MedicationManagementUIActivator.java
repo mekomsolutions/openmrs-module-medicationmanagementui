@@ -12,7 +12,9 @@ package org.openmrs.module.medicationmanagementui;
 
 import org.apache.commons.logging.Log; 
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.ModuleActivator;
+import org.openmrs.module.appframework.service.AppFrameworkService;
 
 /**
  * This class contains the logic that is run every time this module is either started or stopped.
@@ -46,6 +48,11 @@ public class MedicationManagementUIActivator implements ModuleActivator {
 	 * @see ModuleActivator${symbol_pound}started()
 	 */
 	public void started() {
+		
+		AppFrameworkService service = Context.getService(AppFrameworkService.class);
+		// disable orderentryui widget
+		service.disableExtension("orderentryui.patientDashboard.activeDrugOrders");
+		
 		log.info("Medication Management UI Module started");
 	}
 	
@@ -60,6 +67,13 @@ public class MedicationManagementUIActivator implements ModuleActivator {
 	 * @see ModuleActivator${symbol_pound}stopped()
 	 */
 	public void stopped() {
+		
+		AppFrameworkService service = Context.getService(AppFrameworkService.class);
+		// enable orderentryui widget
+		service.enableExtension("orderentryui.patientDashboard.activeDrugOrders");
+		
+		
+		
 		log.info("Medication Management UI Module stopped");
 	}
 		
