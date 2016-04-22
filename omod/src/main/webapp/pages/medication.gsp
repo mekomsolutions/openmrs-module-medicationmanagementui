@@ -76,7 +76,7 @@ ui.includeJavascript("medicationmanagementui", "medicationManagementUi.js")
 			</div>
 
 			<ul>
-				<li ng-repeat="order in allDrugOrders | visit:config.visit | orderBy:'dateActivated':true" style="margin-top: 20px;display: block; width:100%" >
+				<li ng-repeat="order in allDrugOrders | visit:config.visit | active | orderBy:'dateActivated':true" style="margin-top: 20px;display: block; width:100%" >
 
 					<div ng-controller="MMUIOrderTemplate">
 						<table  style="border-bottom: 3px solid #00463f;">
@@ -92,20 +92,21 @@ ui.includeJavascript("medicationmanagementui", "medicationManagementUi.js")
 								<td ng-click="showDetails=!showDetails" >
 									<div >{{ order | instructions }}</div>
 								</td>
-								<td style="width:1%;white-space:nowrap; text-align:right;">
+								<td style="width:1%;white-space:nowrap; text-align:right;" ng-show="order.isActive()">
 									<div>
-										<a data="{{order.uuid}}" ng-show="order.reviseUrl" ng-href="{{order.reviseUrl}}" title="Revise"  >
-											<i class="icon-pencil"></i>
-										</a>
-										<span ng-show="order.isActive()">	
-											<a data="{{order.uuid}}" ng-click="redirectToDispense(order.uuid)" title="Dispense" style="" >
+										<span ng-show="loading"><img src="${ ui.resourceLink("uicommons", "images/spinner.gif") }" width="23px" /></span>
+
+											<a data="{{order.uuid}}" ng-href="{{order.reviseUrl}}" ng-hide="loading" ng-click="loading=true" title="Revise"  >
+												<i class="icon-pencil"></i>
+											</a>
+										
+											<a data="{{order.uuid}}"  ng-hide="loading" ng-click="redirectToDispense(order.uuid)" title="Dispense" style="" >
 												<i class="icon-external-link"></i>
 											</a>
-										</span>
-										<span ng-show="order.isActive()">
-											<a ng-hide="loading" data="{{order}}" title="Discontinue" ng-click="discontinueOrder(order)"><i class="icon-remove"></i></a>
-											<span ng-show="loading"><img src="${ ui.resourceLink("uicommons", "images/spinner.gif") }" width="23px" /></span>
-										</span>
+
+											<a ng-hide="loading" data="{{order}}" title="Discontinue" ng-click="discontinueOrder(order)">
+												<i class="icon-remove"></i>
+											</a>
 									</div>
 								</td>
 							</tr>
