@@ -17,12 +17,13 @@ angular.module('MedicationManagementUI', ['orderService','drugOrders','session']
 
 		$scope.config = $window.OpenMRS.drugOrdersConfig;
 
-
 		$scope.promiseArray = [];
 
 		$scope.loadData = function() {
 
 			$scope.loading = true;
+
+			$scope.config.createOrderUrl = $scope.config.orderEntryUiUrl + "&mode=new";
 
 			$scope.promiseArray.push(
 				OrderService.getOrders({
@@ -35,7 +36,7 @@ angular.module('MedicationManagementUI', ['orderService','drugOrders','session']
 					$scope.activeDrugOrders = DrugOrderModelService.wrapOrders(orders);
 					/* get the revision URL of each active order */
 					for (var i=0; i < $scope.activeDrugOrders.length; i++ ) { 
-						$scope.activeDrugOrders[i].reviseUrl = $scope.config.orderEntryUIUrl + "&order=" + $scope.activeDrugOrders[i].uuid;
+						$scope.activeDrugOrders[i] = setReviseUrl($scope.activeDrugOrders[i]);
 					}
 
 				})
@@ -97,8 +98,8 @@ angular.module('MedicationManagementUI', ['orderService','drugOrders','session']
 			return orders;
 		}
 
-		function getReviseUrl (order) {
-			order.reviseUrl = $scope.config.orderEntryUIUrl + "&order=" + orderUuid;
+		function setReviseUrl (order) {
+			order.reviseUrl = $scope.config.orderEntryUiUrl + "&order=" + order.uuid + "&mode=revise";
 			return order;
 		}
 

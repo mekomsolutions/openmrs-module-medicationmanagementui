@@ -15,6 +15,7 @@ import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.medicationmanagementui.MedicationManagementUIConstants;
 import org.openmrs.module.webservices.rest.web.ConversionUtil;
 import org.openmrs.module.webservices.rest.web.representation.Representation;
+import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
@@ -47,7 +48,6 @@ public class MedicationPageController {
 			jsonConfig.put("intialCareSetting", careSetting.getUuid());
 		}
 
-
 		List<CareSetting> careSettings = orderService.getCareSettings(false);
 		jsonConfig.put("careSettings", convertToFull(careSettings));
 
@@ -56,6 +56,8 @@ public class MedicationPageController {
 		EncounterType encounterType = encounterService.getEncounterTypeByUuid(MedicationManagementUIConstants.ORDER_ENCOUNTER_TYPE_UUID);
 		jsonConfig.put("drugOrderEncounterType", convertToFull(encounterType));
 		
+		String orderEntryUiUrl = ui.pageLink("orderentryui", "drugOrders", SimpleObject.create("patientId", patient.getId(), "patient", patient.getId(),  "returnUrl", ui.thisUrl()));
+		jsonConfig.put("orderEntryUiUrl", orderEntryUiUrl);
 		
 		
 		model.put("patient", patient);

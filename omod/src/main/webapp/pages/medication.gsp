@@ -23,7 +23,7 @@ ui.includeJavascript("orderentryui", "order-model.js")
 ui.includeJavascript("orderentryui", "order-entry.js")
 ui.includeJavascript("orderentryui", "drugOrders.js")
 
-ui.includeJavascript("medicationmanagementui", "medicationManagementUI.js")
+ui.includeJavascript("medicationmanagementui", "medicationManagementUi.js")
 
 %>
 
@@ -34,11 +34,8 @@ ui.includeJavascript("medicationmanagementui", "medicationManagementUI.js")
 	{ label: "${ ui.message("medicationmanagementui.page.label")}"}
 	];
 
-	var orderEntryUIUrl = "${ ui.pageLink("orderentryui", "drugOrders", [patientId: patient.id, patient: patient.id, returnUrl: ui.thisUrl()]) }";
-
 	window.OpenMRS = window.OpenMRS || {};
 	window.OpenMRS.drugOrdersConfig = ${ jsonConfig };
-	window.OpenMRS.drugOrdersConfig.orderEntryUIUrl = orderEntryUIUrl;
 
 </script>
 
@@ -69,7 +66,7 @@ ui.includeJavascript("medicationmanagementui", "medicationManagementUI.js")
 			<div style="clear: both;"></div>
 			<div>
 				<% if (context.hasPrivilege("App: orderentryui.drugOrders")) { %>
-				<a href="${ ui.pageLink("orderentryui", "drugOrders", [patientId: patient.id, patient: patient.id, returnUrl: ui.thisUrl()]) }">
+				<a ng-href="{{config.createOrderUrl}}">
 					<button>
 						Add
 						<i class="icon-plus-sign"></i>
