@@ -54,9 +54,10 @@ public class MedicationPageController {
 		jsonConfig.put("patient", convertToFull(patient));
 
 		EncounterType encounterType = encounterService.getEncounterTypeByUuid(MedicationManagementUIConstants.ORDER_ENCOUNTER_TYPE_UUID);
-		
 		jsonConfig.put("drugOrderEncounterType", convertToFull(encounterType));
-
+		
+		
+		
 		model.put("patient", patient);
 		model.put("jsonConfig", ui.toJson(jsonConfig));
 

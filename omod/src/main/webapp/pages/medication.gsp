@@ -31,11 +31,14 @@ ui.includeJavascript("medicationmanagementui", "medicationManagementUI.js")
 
 	var breadcrumbs = [
 	{ icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm' },
-	{ label: "${ ui.message("coreapps.app.activeVisits.label")}"}
+	{ label: "${ ui.message("medicationmanagementui.page.label")}"}
 	];
+
+	var orderEntryUIUrl = "${ ui.pageLink("orderentryui", "drugOrders", [patientId: patient.id, patient: patient.id, returnUrl: ui.thisUrl()]) }";
 
 	window.OpenMRS = window.OpenMRS || {};
 	window.OpenMRS.drugOrdersConfig = ${ jsonConfig };
+	window.OpenMRS.drugOrdersConfig.orderEntryUIUrl = orderEntryUIUrl;
 
 </script>
 
@@ -54,7 +57,9 @@ ui.includeJavascript("medicationmanagementui", "medicationManagementUI.js")
 			</li>
 		</ul>
 
-		<div  ng-controller="MMUIOrderListCtrl" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
+		<oeui-entry></oeui-entry>
+
+		<div  ng-controller="MMUIOrderListCtrl" class="ui-tabs-panel ui-widget-content ui-corner-bottom">		
 
 			<h3 style="float:left;">Current Orders</h3>
 			<div>
@@ -74,7 +79,7 @@ ui.includeJavascript("medicationmanagementui", "medicationManagementUI.js")
 			</div>
 
 			<ul>
-				<li ng-repeat="order in allDrugOrders | visit:config.visit | active | orderBy:'dateActivated':true" style="margin-top: 20px;display: block; width:100%" >
+				<li ng-repeat="order in allDrugOrders | visit:config.visit | orderBy:'dateActivated':true" style="margin-top: 20px;display: block; width:100%" >
 
 					<div ng-controller="MMUIOrderTemplate">
 						<table  style="border-bottom: 3px solid #00463f;">
@@ -92,22 +97,25 @@ ui.includeJavascript("medicationmanagementui", "medicationManagementUI.js")
 								</td>
 								<td style="width:1%;white-space:nowrap; text-align:right;">
 									<div>
-										<a data="{{order.uuid}}" ng-click="redirectToRevise(order.uuid)" title="Revise" >
+										<a data="{{order.uuid}}" ng-show="order.reviseUrl" ng-href="{{order.reviseUrl}}" title="Revise"  >
 											<i class="icon-pencil"></i>
-										</a>	
-										<a data="{{order.uuid}}" ng-click="redirectToDispense(order.uuid)" title="Dispense" style="" >
-											<i class="icon-external-link"></i>
 										</a>
-
-										<a ng-hide="loading" data="{{order}}" title="Discontinue" ng-click="discontinueOrder(order)"><i class="icon-remove"></i></a>
-										<span ng-show="loading"><img src="${ ui.resourceLink("uicommons", "images/spinner.gif") }" width="23px" /></span>
+										<span ng-show="order.isActive()">	
+											<a data="{{order.uuid}}" ng-click="redirectToDispense(order.uuid)" title="Dispense" style="" >
+												<i class="icon-external-link"></i>
+											</a>
+										</span>
+										<span ng-show="order.isActive()">
+											<a ng-hide="loading" data="{{order}}" title="Discontinue" ng-click="discontinueOrder(order)"><i class="icon-remove"></i></a>
+											<span ng-show="loading"><img src="${ ui.resourceLink("uicommons", "images/spinner.gif") }" width="23px" /></span>
+										</span>
 									</div>
 								</td>
 							</tr>
 						</table>
 
 						<div ng-show="showDetails"  style="padding-left: 20px; padding-right: 20px; padding-bottom: 20px;padding-top: 5px;border: solid 1px #eeeeee; background-color:  #F9F9F9; ">
-							
+
 							<!--
 							<div style="margin-top:15px; margin-bottom: 15px">
 								<table style="width: 100%">

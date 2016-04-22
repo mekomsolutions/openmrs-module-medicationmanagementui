@@ -33,6 +33,11 @@ angular.module('MedicationManagementUI', ['orderService','drugOrders','session']
 					status: 'active'
 				}).then(function(orders) {
 					$scope.activeDrugOrders = DrugOrderModelService.wrapOrders(orders);
+					/* get the revision URL of each active order */
+					for (var i=0; i < $scope.activeDrugOrders.length; i++ ) { 
+						$scope.activeDrugOrders[i].reviseUrl = $scope.config.orderEntryUIUrl + "&order=" + $scope.activeDrugOrders[i].uuid;
+					}
+
 				})
 				);
 
@@ -91,6 +96,12 @@ angular.module('MedicationManagementUI', ['orderService','drugOrders','session']
 			})
 			return orders;
 		}
+
+		function getReviseUrl (order) {
+			order.reviseUrl = $scope.config.orderEntryUIUrl + "&order=" + orderUuid;
+			return order;
+		}
+
 	}
 	])
 
