@@ -37,6 +37,7 @@ angular.module('MedicationManagementUI', ['orderService','drugOrders','session']
 					/* get the revision URL of each active order */
 					for (var i=0; i < $scope.activeDrugOrders.length; i++ ) { 
 						$scope.activeDrugOrders[i] = setReviseUrl($scope.activeDrugOrders[i]);
+						$scope.activeDrugOrders[i] = setDispenseUrl($scope.activeDrugOrders[i]);
 					}
 
 				})
@@ -100,6 +101,11 @@ angular.module('MedicationManagementUI', ['orderService','drugOrders','session']
 
 		function setReviseUrl (order) {
 			order.reviseUrl = $scope.config.orderEntryUiUrl + "&order=" + order.uuid + "&mode=revise";
+			return order;
+		}
+
+		function setDispenseUrl (order) {
+			order.dispenseUrl = $scope.config.medicationDispenseUrl + "&order=" + order.uuid;
 			return order;
 		}
 
@@ -169,6 +175,7 @@ angular.module('MedicationManagementUI', ['orderService','drugOrders','session']
 		};
 
 		$scope.redirectToRevise = function(orderUuid) {
+			
 			console.log("should redirect to Revise");
 			console.log(orderUuid);
 		};

@@ -56,6 +56,8 @@ public class MedicationPageController {
 		String orderEntryUiUrl = ui.pageLink("orderentryui", "drugOrders", SimpleObject.create("patientId", patient.getId(), "patient", patient.getId(),  "returnUrl", ui.thisUrl()));
 		jsonConfig.put("orderEntryUiUrl", orderEntryUiUrl);
 		
+		String medicationDispenseUrl = ui.pageLink("medicationdispense", "dispense", SimpleObject.create("patient", patient.getId(),  "returnUrl", ui.thisUrl()));
+		jsonConfig.put("medicationDispenseUrl", medicationDispenseUrl);
 		
 		model.put("patient", patient);
 		model.put("jsonConfig", ui.toJson(jsonConfig));

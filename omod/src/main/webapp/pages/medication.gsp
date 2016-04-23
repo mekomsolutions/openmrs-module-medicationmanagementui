@@ -53,7 +53,7 @@ ui.includeJavascript("medicationmanagementui", "medicationManagementUi.js")
 				</a>
 			</li>
 		</ul>
-		
+
 		<div  ng-controller="MMUIOrderListCtrl" class="ui-tabs-panel ui-widget-content ui-corner-bottom">		
 
 			<h3 style="float:left;">Current Orders</h3>
@@ -98,7 +98,7 @@ ui.includeJavascript("medicationmanagementui", "medicationManagementUi.js")
 											<i class="icon-pencil"></i>
 										</a>
 										
-										<a data="{{order.uuid}}"  ng-hide="loading" ng-click="redirectToDispense(order.uuid)" title="Dispense" style="" >
+										<a data="{{order.uuid}}"  ng-href="{{order.dispenseUrl}}" ng-hide="loading" ng-click="redirectToDispense(order.uuid)" title="Dispense" style="" >
 											<i class="icon-external-link"></i>
 										</a>
 
