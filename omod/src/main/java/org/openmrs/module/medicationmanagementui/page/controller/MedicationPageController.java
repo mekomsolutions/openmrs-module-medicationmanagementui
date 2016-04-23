@@ -23,10 +23,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 public class MedicationPageController {
 
-	private Visit visit;
 
 	public void controller(@RequestParam("patient") Patient patient,
-			@RequestParam(value="visit", required=false) String visitUuid,
+			@RequestParam(value="visit", required=false) Visit visit,
 			@RequestParam(value = "careSetting", required = false) CareSetting careSetting,
 			@SpringBean("orderService") OrderService orderService,
 			@SpringBean("visitService") VisitService visitService,
@@ -38,9 +37,7 @@ public class MedicationPageController {
 
 		Map<String, Object> jsonConfig = new LinkedHashMap<String, Object>();
 
-		// if visitUUID is provided in the URL, retrieve the visit object and put it in the model
-		if (!(visitUuid == null || visitUuid == "" )) {
-			visit = visitService.getVisitByUuid(visitUuid);
+		if (visit != null) {
 			jsonConfig.put("visit", convertToFull(visit));
 		}
 

@@ -53,9 +53,7 @@ ui.includeJavascript("medicationmanagementui", "medicationManagementUi.js")
 				</a>
 			</li>
 		</ul>
-
-		<oeui-entry></oeui-entry>
-
+		
 		<div  ng-controller="MMUIOrderListCtrl" class="ui-tabs-panel ui-widget-content ui-corner-bottom">		
 
 			<h3 style="float:left;">Current Orders</h3>
@@ -96,17 +94,17 @@ ui.includeJavascript("medicationmanagementui", "medicationManagementUi.js")
 									<div>
 										<span ng-show="loading"><img src="${ ui.resourceLink("uicommons", "images/spinner.gif") }" width="23px" /></span>
 
-											<a data="{{order.uuid}}" ng-href="{{order.reviseUrl}}" ng-hide="loading" ng-click="loading=true" title="Revise"  >
-												<i class="icon-pencil"></i>
-											</a>
+										<a data="{{order.uuid}}" ng-href="{{order.reviseUrl}}" ng-hide="loading" ng-click="loading=true" title="Revise"  >
+											<i class="icon-pencil"></i>
+										</a>
 										
-											<a data="{{order.uuid}}"  ng-hide="loading" ng-click="redirectToDispense(order.uuid)" title="Dispense" style="" >
-												<i class="icon-external-link"></i>
-											</a>
+										<a data="{{order.uuid}}"  ng-hide="loading" ng-click="redirectToDispense(order.uuid)" title="Dispense" style="" >
+											<i class="icon-external-link"></i>
+										</a>
 
-											<a ng-hide="loading" data="{{order}}" title="Discontinue" ng-click="discontinueOrder(order)">
-												<i class="icon-remove"></i>
-											</a>
+										<a ng-hide="loading" data="{{order}}" title="Discontinue" ng-click="discontinueOrder(order)">
+											<i class="icon-remove"></i>
+										</a>
 									</div>
 								</td>
 							</tr>
