@@ -100,7 +100,7 @@ angular.module('MedicationManagementUI', ['orderService','drugOrders','session']
 		}
 
 		function setReviseUrl (order) {
-			order.reviseUrl = $scope.config.orderEntryUiUrl + "&order=" + order.uuid + "&mode=revise";
+			order.reviseUrl = $scope.config.orderEntryUiUrl + "&order=" + order.uuid + "&mode=revise"  + "&skipDispense=true";
 			return order;
 		}
 

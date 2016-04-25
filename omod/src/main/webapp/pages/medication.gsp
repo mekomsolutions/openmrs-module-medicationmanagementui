@@ -98,7 +98,7 @@ ui.includeJavascript("medicationmanagementui", "medicationManagementUi.js")
 											<i class="icon-pencil"></i>
 										</a>
 										
-										<a data="{{order.uuid}}"  ng-href="{{order.dispenseUrl}}" ng-hide="loading" ng-click="redirectToDispense(order.uuid)" title="Dispense" style="" >
+										<a data="{{order.uuid}}"  ng-href="{{order.dispenseUrl}}" ng-hide="loading" title="Dispense" style="" >
 											<i class="icon-external-link"></i>
 										</a>
 
