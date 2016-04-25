@@ -115,7 +115,7 @@ angular.module('MedicationManagementUI', ['orderService','drugOrders','session']
 .filter('active', function () {
 	return function (items, isActive) {
 
-		isActive = isActive || true;
+		
 		var itemsToReturn = [];
 
 		if (typeof isActive === 'undefined') {

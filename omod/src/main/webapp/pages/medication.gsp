@@ -170,17 +170,113 @@ ui.includeJavascript("medicationmanagementui", "medicationManagementUi.js")
 			</li>
 
 		</ul>
-		<!--
-			<div  style="margin-top: 30px">
-				<a ng-click="showInactive=true" ng-hide="showInactive">Show discontinued and completed <i class="icon-info-sign"></i></a>
-				
-			</div>
-			<div ng-show="showInactive">
 
-			</div>
+		<div  style="margin-top: 30px">
+			<a ng-click="showInactive=true" ng-hide="showInactive">Show discontinued and completed <i class="icon-info-sign"></i></a>
+		</div>
+		<div ng-show="showInactive">
+		<h3>Inactive orders</h3>
+		<a ng-click="showInactive=false">(Show less)</a>
+			<ul>
+				<li ng-repeat="order in allDrugOrders | visit:config.visit | active:false | orderBy:'dateActivated':true" style="margin-top: 20px;display: block; width:100%" >
 
-		-->
+					<div ng-controller="MMUIOrderTemplate">
+						<table  style="border-bottom: 3px solid #00463f;">
+							<tr title="Click to get more details">
+								<td ng-click="showDetails=!showDetails"  style="width: 18%">
+									<span ng-show="order.isActive()" class="tag">Active</span>
+									<span ng-hide="order.isActive()" class="tag" style="background-color:#999999">Inactive</span>
+									<a style="margin-left: 5px;">{{order.orderNumber}} </a>
+								</td>
+								<td ng-click="showDetails=!showDetails"  style="width: 22%">
+									<span> {{order | dates }}</span>              
+								</td>
+								<td ng-click="showDetails=!showDetails" >
+									<div >{{ order | instructions }}</div>
+								</td>
+								<td style="width:1%;white-space:nowrap; text-align:right;" ng-show="order.isActive()">
+									<div>
+										<span ng-show="loading"><img src="${ ui.resourceLink("uicommons", "images/spinner.gif") }" width="23px" /></span>
+
+										<a data="{{order.uuid}}" ng-href="{{order.reviseUrl}}" ng-hide="loading" ng-click="loading=true" title="Revise"  >
+											<i class="icon-pencil"></i>
+										</a>
+										
+										<a data="{{order.uuid}}"  ng-href="{{order.dispenseUrl}}" ng-hide="loading" ng-click="redirectToDispense(order.uuid)" title="Dispense" style="" >
+											<i class="icon-external-link"></i>
+										</a>
+
+										<a ng-hide="loading" data="{{order}}" title="Discontinue" ng-click="discontinueOrder(order)">
+											<i class="icon-remove"></i>
+										</a>
+									</div>
+								</td>
+							</tr>
+						</table>
+
+						<div ng-show="showDetails"  style="padding-left: 20px; padding-right: 20px; padding-bottom: 20px;padding-top: 5px;border: solid 1px #eeeeee; background-color:  #F9F9F9; ">
+
+							<!--
+							<div style="margin-top:15px; margin-bottom: 15px">
+								<table style="width: 100%">
+									<thead>
+										<th>
+											Dispenses
+										</th>
+									</thead>
+									<tbody>
+										<tr ng-repeat="dispense in OrderDispenses">
+											<td>
+												Dispense1 {{order.orderNumber}}
+											</td>  
+										</tr>
+										<tr>
+											<td>
+												Dispense2 {{order.orderNumber}}
+											</td>  
+										</tr>
+										<tr>
+											<td>
+												Dispense3 {{order.orderNumber}}
+											</td>  
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						-->
+
+
+						<div style="margin-top:15px; margin-bottom: 15px">
+							<div>
+								<table style="width: 100%">
+									<thead>
+										<th>
+											Revisions
+										</th>
+									</thead>
+									<tbody>
+										<tr ng-show="!(order.revisions | filter:nameText).length">
+											<td>
+												--
+											</td>
+										</tr>
+										<tr ng-repeat="revision in order.revisions">
+											<td>
+												{{revision.orderNumber}}
+											</td>  
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+			</li>
+
+		</ul>
 	</div>
+
+</div>
 </div>
 
 </div>
