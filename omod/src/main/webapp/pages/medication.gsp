@@ -79,16 +79,17 @@ ui.includeJavascript("medicationmanagementui", "medicationManagementUi.js")
 					<div ng-controller="MMUIOrderTemplate">
 						<table  style="border-bottom: 3px solid #00463f;">
 							<tr title="Click to get more details">
-								<td ng-click="showDetails=!showDetails"  style="width: 18%">
+								<td ng-click="showDetails=!showDetails"  style="width: 70px">
 									<span ng-show="order.isActive()" class="tag">Active</span>
 									<span ng-hide="order.isActive()" class="tag" style="background-color:#999999">Inactive</span>
-									<a style="margin-left: 5px;">{{order.orderNumber}} </a>
-								</td>
-								<td ng-click="showDetails=!showDetails"  style="width: 22%">
-									<span> {{order | dates }}</span>              
+									<a style=""></a>
 								</td>
 								<td ng-click="showDetails=!showDetails" >
-									<div >{{ order | instructions }}</div>
+									<span style="font-weight: bold;">{{ order.drug.display }}: </span>
+									<span>{{ order | instructions }}</span>
+								</td>
+								<td ng-click="showDetails=!showDetails">
+									<span> {{order | dates }}</span>              
 								</td>
 								<td style="width:1%;white-space:nowrap; text-align:right;" ng-show="order.isActive()">
 									<div>
@@ -158,7 +159,7 @@ ui.includeJavascript("medicationmanagementui", "medicationManagementUi.js")
 										</tr>
 										<tr ng-repeat="revision in order.revisions">
 											<td>
-												{{revision.orderNumber}}
+												{{revision.action }}: {{revision | instructions }}
 											</td>  
 										</tr>
 									</tbody>
@@ -175,8 +176,8 @@ ui.includeJavascript("medicationmanagementui", "medicationManagementUi.js")
 			<a ng-click="showInactive=true" ng-hide="showInactive">Show discontinued and completed <i class="icon-info-sign"></i></a>
 		</div>
 		<div ng-show="showInactive">
-		<h3>Inactive orders</h3>
-		<a ng-click="showInactive=false">(Show less)</a>
+			<h3>Inactive orders</h3>
+			<a ng-click="showInactive=false">(Show less)</a>
 			<ul>
 				<li ng-repeat="order in allDrugOrders | visit:config.visit | active:false | orderBy:'dateActivated':true" style="margin-top: 20px;display: block; width:100%" >
 
