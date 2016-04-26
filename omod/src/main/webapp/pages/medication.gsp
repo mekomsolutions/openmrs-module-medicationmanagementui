@@ -74,6 +74,11 @@ ui.includeJavascript("medicationmanagementui", "medicationManagementUi.js")
 			</div>
 
 			<ul>
+
+				<div ng-show="!(allDrugOrders | active | filter:nameText).length" style="margin-top: 3%">
+					<div>-- No active order-- </div>
+					<div>Click 'Add' to prescribe orders</div>
+				</div>
 				<li ng-repeat="order in allDrugOrders | visit:config.visit | active | orderBy:'dateActivated':true" style="margin-top: 20px;display: block; width:100%" >
 
 					<div ng-controller="MMUIOrderTemplate">
@@ -147,8 +152,8 @@ ui.includeJavascript("medicationmanagementui", "medicationManagementUi.js")
 							<div>
 								<table style="width: 100%">
 									<thead>
-										<th>
-											Revisions
+										<th colspan="2">
+											Revision History
 										</th>
 									</thead>
 									<tbody>
@@ -161,6 +166,9 @@ ui.includeJavascript("medicationmanagementui", "medicationManagementUi.js")
 											<td>
 												{{revision.action }}: {{revision | instructions }}
 											</td>  
+											<td>
+												{{revision | dates }}
+											</td>  
 										</tr>
 									</tbody>
 								</table>
@@ -172,7 +180,7 @@ ui.includeJavascript("medicationmanagementui", "medicationManagementUi.js")
 
 		</ul>
 
-		<div  style="margin-top: 30px">
+		<div ng-hide="!(allDrugOrders | active:false | filter:nameText).length" style="margin-top: 30px">
 			<a ng-click="showInactive=true" ng-hide="showInactive">Show discontinued and completed <i class="icon-info-sign"></i></a>
 		</div>
 		<div ng-show="showInactive">
