@@ -23,7 +23,7 @@ angular.module('MedicationManagementUI', ['orderService','drugOrders','session']
 
 			$scope.loading = true;
 
-			$scope.config.createOrderUrl = $scope.config.orderEntryUiUrl + "&mode=new";
+			$scope.config.createOrderUrl = $scope.config.orderEntryUiUrl + "&mode=new" + "&skipDispense=true";
 
 			$scope.promiseArray.push(
 				OrderService.getOrders({
