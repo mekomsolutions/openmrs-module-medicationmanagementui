@@ -58,7 +58,7 @@ ui.includeJavascript("medicationmanagementui", "medicationManagementUi.js")
 
 		<div  ng-controller="MMUIOrderListCtrl" class="ui-tabs-panel ui-widget-content ui-corner-bottom">		
 
-			<h3 style="float:left;">Current Orders</h3>
+			<h3 class="title" style="float:left; margin-top:20px">Current Orders</h3>
 			<div>
 				<span ng-hide="loading" ng-click="loadData()" style="float: right"><i class="icon-refresh"></i></span>
 				<span ng-show="loading" style="float: right;"><span>Loading... </span><img src="${ ui.resourceLink("uicommons", "images/spinner.gif") }" width="30px" /></span>
@@ -75,24 +75,24 @@ ui.includeJavascript("medicationmanagementui", "medicationManagementUi.js")
 
 			<ul>
 
-				<div ng-show="!(activeDrugOrders | filter:nameText).length" style="margin-top: 3%">
-					<div style="margin-bottom: 15px; font-style: italic">-- No active order-- </div>
+				<div ng-show="!(activeDrugOrders  | careSetting:careSetting | filter:nameText).length" style="margin-top: 3%">
+					<div style="margin-bottom: 15px; font-style: italic">-- No active order for {{careSetting.display}} -- </div>
 					<div stle>Click 'Add <i class="icon-plus-sign"></i>' to prescribe orders or '<i class="icon-refresh"></i>' to refresh</div>
 				</div>
-				<li ng-repeat="order in activeDrugOrders | visit:config.visit | active | orderBy:'dateActivated':true" style="margin-top: 20px;display: block; width:100%" >
+				<li ng-repeat="order in activeDrugOrders | careSetting:careSetting | visit:config.visit | active | orderBy:'dateActivated':true" style="margin-top: 20px;display: block; width:100%" >
 					<mmui-order></mmui-order>
 				</li>
 
 			</ul>
 
-			<div ng-hide="!(pastDrugOrders | filter:nameText).length" style="margin-top: 30px">
+			<div ng-hide="!(pastDrugOrders | careSetting:careSetting | filter:nameText).length" style="margin-top: 30px">
 				<a ng-click="showInactive=true" ng-hide="showInactive">Show discontinued and completed <i class="icon-info-sign"></i></a>
 			</div>
 			<div ng-show="showInactive">
-				<h3>Inactive orders</h3>
+				<h3 style="margin-top: 40px">Inactive orders</h3>
 				<a ng-click="showInactive=false">(Show less)</a>
 				<ul>
-					<li ng-repeat="order in pastDrugOrders | visit:config.visit | orderBy:'dateActivated':true" style="margin-top: 20px;display: block; width:100%" >
+					<li ng-repeat="order in pastDrugOrders | careSetting:careSetting | visit:config.visit | orderBy:'dateActivated':true" style="margin-top: 20px;display: block; width:100%" >
 						<mmui-order></mmui-order>
 					</li>
 

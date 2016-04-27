@@ -4,7 +4,6 @@
 		<td ng-click="showDetails=!showDetails"  style="width: 70px">
 			<span ng-show="order.isActive()" class="tag">Active</span>
 			<span ng-hide="order.isActive()" class="tag" style="background-color:#999999">Inactive</span>
-			<a style=""></a>
 		</td>
 		<td ng-click="showDetails=!showDetails" >
 			<span style="font-weight: bold;">{{ order.drug.display }}: </span>

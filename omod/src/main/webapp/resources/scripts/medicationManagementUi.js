@@ -3,16 +3,28 @@ angular.module('MedicationManagementUI', ['orderService','drugOrders','session']
 .controller('MMUIPageCtrl', ['$scope', '$window', function($scope, $window) {
 
 	$scope.config = $window.OpenMRS.drugOrdersConfig;
+	$scope.careSettings = $scope.config.careSettings;
+	$scope.careSetting = $scope.config.intialCareSetting ?
+	_.findWhere(config.careSettings, { uuid: config.intialCareSetting }) :
+	$scope.config.careSettings[0];
+
+	$scope.buildCreateOrderUrl = function() {		
+		$scope.config.createOrderUrl = $scope.config.orderEntryUiUrl + "&mode=new" + "&skipDispense=true" + "&careSetting=" + $scope.careSetting.uuid;
+	}
+	$scope.buildCreateOrderUrl();
+
+	$scope.setCareSetting = function(careSetting) {
+		/* TODO confirm dialog or undo functionality if this is going to discard things */
+		$scope.careSetting = careSetting;
+		$scope.buildCreateOrderUrl();
+	}
+
 }])
 
 .controller('MMUIOrderListCtrl', ['$scope', '$window', '$q', 'OrderService', 'DrugOrderModelService',
 	function($scope, $window, $q, OrderService, DrugOrderModelService) {
 
-		$scope.activeDrugOrders = {loading: true};
-		$scope.pastDrugOrders = {loading: true};;
-		$scope.allDrugOrders = {loading: true};;
-
-		// define a custom representation of an Order, so to retrieve the full encounter
+		/* define a custom representation of an Order, so to retrieve the full encounter */
 		customRep = 'custom:(action:ref,asNeeded:ref,asNeededCondition:ref,autoExpireDate:ref,brandName:ref,careSetting:ref,commentToFulfiller:ref,concept:ref,dateActivated:ref,dateStopped:ref,dispenseAsWritten:ref,display:ref,dose:ref,doseUnits:ref,dosingInstructions:ref,dosingType:ref,drug:ref,duration:ref,durationUnits:ref,encounter:full,frequency:ref,instructions:ref,numRefills:ref,orderNumber:ref,orderReason:ref,orderReasonNonCoded:ref,orderer:ref,patient:ref,previousOrder:ref,quantity:ref,quantityUnits:ref,route:ref,urgency:ref,uuid:ref,links:ref';
 
 		$scope.config = $window.OpenMRS.drugOrdersConfig;
@@ -21,43 +33,50 @@ angular.module('MedicationManagementUI', ['orderService','drugOrders','session']
 
 		$scope.loadData = function() {
 
+			$scope.activeDrugOrders = [];
+			$scope.pastDrugOrders = [];
+			$scope.allDrugOrders = [];
+
 			$scope.loading = true;
 
-			$scope.config.createOrderUrl = $scope.config.orderEntryUiUrl + "&mode=new" + "&skipDispense=true";
+			for (var i=0; i < $scope.careSettings.length ; i++) {
 
-			$scope.promiseArray.push(
-				OrderService.getOrders({
-					patient: $scope.config.patient.uuid,
-					t: 'drugorder',
-					v: customRep,
-					careSetting: "6f0c9a92-6f24-11e3-af88-005056821db0",
-					status: 'active'
-				}).then(function(orders) {
-					$scope.activeDrugOrders = DrugOrderModelService.wrapOrders(orders);
-					/* get the revision URL of each active order */
-					for (var i=0; i < $scope.activeDrugOrders.length; i++ ) { 
-						$scope.activeDrugOrders[i] = setReviseUrl($scope.activeDrugOrders[i]);
-						$scope.activeDrugOrders[i] = setDispenseUrl($scope.activeDrugOrders[i]);
-					}
+				$scope.promiseArray.push(
+					OrderService.getOrders({
+						patient: $scope.config.patient.uuid,
+						t: 'drugorder',
+						v: customRep,
+						careSetting: $scope.careSettings[i].uuid,
+						status: 'active'
+					}).then(function(results) {
 
-				})
-				);
+						/* get the revision URL of each active order */
+						for (var i=0; i < results.length; i++ ) { 
+							results[i] = setReviseUrl(results[i]);
+							results[i] = setDispenseUrl(results[i]);
+						} 
+						$scope.activeDrugOrders = results.concat($scope.activeDrugOrders);
+					})
+					);
 
-			$scope.promiseArray.push(
-				OrderService.getOrders({
-					patient: $scope.config.patient.uuid,
-					t: 'drugorder',
-					v: customRep,
-					careSetting: "6f0c9a92-6f24-11e3-af88-005056821db0",
-					status: 'inactive'
-				}).then(function(orders) {
-					$scope.pastDrugOrders = DrugOrderModelService.wrapOrders(orders);
-				})
-				);
+				$scope.promiseArray.push(
+					OrderService.getOrders({
+						patient: $scope.config.patient.uuid,
+						t: 'drugorder',
+						v: customRep,
+						careSetting: $scope.careSettings[i].uuid,
+						status: 'inactive'
+					}).then(function(results) {
+						$scope.pastDrugOrders = results.concat($scope.pastDrugOrders);
+					})
+					);
+			}
 
-
-			// We store all the promises in an array and apply logic when they are all resolved
+			/* We store all the promises in an array and apply logic when they are all resolved */
 			$q.all($scope.promiseArray).then(function() {
+				$scope.activeDrugOrders = DrugOrderModelService.wrapOrders($scope.activeDrugOrders);
+				$scope.pastDrugOrders = DrugOrderModelService.wrapOrders($scope.pastDrugOrders);
+
 				$scope.allDrugOrders = $scope.activeDrugOrders.concat($scope.pastDrugOrders);
 				$scope.allDrugOrders = getRevisions($scope.allDrugOrders);
 
@@ -67,23 +86,22 @@ angular.module('MedicationManagementUI', ['orderService','drugOrders','session']
 
 		$scope.loadData();
 
-
 		function getRevisions(orders) {
 
 			var ordersMap = {};
 
-			orders.forEach(function f2(order) {
+			orders.forEach(function (order) {
 				if (order.previousOrder != null) {
 					ordersMap[order.uuid] = order.previousOrder.uuid;
 				}
 			});
 
-			orders.forEach(function f1(order, index) {
+			orders.forEach(function (order, index) {
 				var revisions = [];
 
 				while (order.uuid in ordersMap) {
-					// order.previousOrder returns only a 'ref' to the previousOrder, not the 'full' object
-					// so we have to retrieve the complete object from the 'orders' list, based on its UUID
+					/* order.previousOrder returns only a 'ref' to the previousOrder, not the 'full' object */
+					/* so we have to retrieve the complete object from the 'orders' list, based on its UUID */
 					
 					for (var i=0; i < orders.length; i++ ) {
 						if (ordersMap[order.uuid] == orders[i].uuid) {
@@ -151,6 +169,23 @@ angular.module('MedicationManagementUI', ['orderService','drugOrders','session']
 			var item = items[i];
 			if (item.encounter.visit != null) {
 				if (item.encounter.visit.uuid == visit.uuid) {
+					itemsToReturn.push(item);
+				}
+			} 		
+		}
+		return itemsToReturn;
+	}
+})
+
+.filter('careSetting', function () {
+	return function (items, careSetting) {
+		
+		var itemsToReturn = [];
+
+		for (var i = 0; i < items.length ; i++) {
+			var item = items[i];
+			if (item.careSetting != null) {
+				if (item.careSetting.uuid == careSetting.uuid) {
 					itemsToReturn.push(item);
 				}
 			} 		
