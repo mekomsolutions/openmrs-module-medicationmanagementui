@@ -159,52 +159,48 @@ angular.module('MedicationManagementUI', ['orderService','drugOrders','session']
 	}
 })
 
-.controller('MMUIOrderTemplate', ['$scope', '$window', '$filter','SessionInfo', 'OrderEntryService',
-	function($scope, $window, $filter,SessionInfo,OrderEntryService) {
+.directive('mmuiOrder', [ '$window', '$filter','SessionInfo', 'OrderEntryService',
+	function($window, $filter,SessionInfo,OrderEntryService) {
+		return {
+			restrict: 'E',
+			templateUrl: 'templates/orderTemplate.page',
 
-		$scope.config = $window.OpenMRS.drugOrdersConfig;
+			link: function($scope, element, attrs) {
 
-		var orderContext = {};
-		SessionInfo.get().$promise.then(function(info) {
-			orderContext.provider = info.currentProvider;
-		});
+				$scope.config = $window.OpenMRS.drugOrdersConfig;
 
-		$scope.redirectToDispense = function(orderUuid) {
-			console.log("should redirect to Dispense");
-			console.log(orderUuid);
-		};
+				var orderContext = {};
+				SessionInfo.get().$promise.then(function(info) {
+					orderContext.provider = info.currentProvider;
+				});
 
-		$scope.redirectToRevise = function(orderUuid) {
-			
-			console.log("should redirect to Revise");
-			console.log(orderUuid);
-		};
 
-		$scope.discontinueOrder = function(activeOrder) {
-			
-			var dcOrder = activeOrder.createDiscontinueOrder(orderContext);
-			var draftOrders = [];
-			draftOrders.push(dcOrder);
+				$scope.discontinueOrder = function(activeOrder) {
 
-			var encounterContext = {
-				patient: $scope.config.patient,
-				encounterType: $scope.config.drugOrderEncounterType,
-				location: null,
-				visit: $scope.config.visit
-			};
+					var dcOrder = activeOrder.createDiscontinueOrder(orderContext);
+					var draftOrders = [];
+					draftOrders.push(dcOrder);
 
-			$scope.loading = true;
-			OrderEntryService.signAndSave({ draftOrders: draftOrders }, encounterContext)
-			.$promise.then(function(result) {
-				location.href = location.href;
-			}, function(errorResponse) {
-				emr.errorMessage(errorResponse.data.error.message);
-				$scope.loading = false;
-			});
+					var encounterContext = {
+						patient: $scope.config.patient,
+						encounterType: $scope.config.drugOrderEncounterType,
+						location: null,
+						visit: $scope.config.visit
+					};
 
+					$scope.loading = true;
+					OrderEntryService.signAndSave({ draftOrders: draftOrders }, encounterContext)
+					.$promise.then(function(result) {
+						location.href = location.href;
+					}, function(errorResponse) {
+						emr.errorMessage(errorResponse.data.error.message);
+						$scope.loading = false;
+					});
+
+				}
+			}
 		}
-
-	}
+	},
 	])
 
 .factory('DrugOrderModelService', function(){
