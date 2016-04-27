@@ -77,24 +77,24 @@ ui.includeJavascript("medicationmanagementui", "medicationManagementUi.js")
 
 			<ul>
 
-				<div ng-show="!(allDrugOrders | active | filter:nameText).length" style="margin-top: 3%">
+				<div ng-show="!(activeDrugOrders | filter:nameText).length" style="margin-top: 3%">
 					<div>-- No active order-- </div>
 					<div>Click 'Add' to prescribe orders</div>
 				</div>
-				<li ng-repeat="order in allDrugOrders | visit:config.visit | active | orderBy:'dateActivated':true" style="margin-top: 20px;display: block; width:100%" >
+				<li ng-repeat="order in activeDrugOrders | visit:config.visit | active | orderBy:'dateActivated':true" style="margin-top: 20px;display: block; width:100%" >
 					<mmui-order></mmui-order>
 				</li>
 
 			</ul>
 
-			<div ng-hide="!(allDrugOrders | active:false | filter:nameText).length" style="margin-top: 30px">
+			<div ng-hide="!(pastDrugOrders | filter:nameText).length" style="margin-top: 30px">
 				<a ng-click="showInactive=true" ng-hide="showInactive">Show discontinued and completed <i class="icon-info-sign"></i></a>
 			</div>
 			<div ng-show="showInactive">
 				<h3>Inactive orders</h3>
 				<a ng-click="showInactive=false">(Show less)</a>
 				<ul>
-					<li ng-repeat="order in allDrugOrders | visit:config.visit | active:false | orderBy:'dateActivated':true" style="margin-top: 20px;display: block; width:100%" >
+					<li ng-repeat="order in pastDrugOrders | visit:config.visit | orderBy:'dateActivated':true" style="margin-top: 20px;display: block; width:100%" >
 						<mmui-order></mmui-order>
 					</li>
 

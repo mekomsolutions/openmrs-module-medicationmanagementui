@@ -72,13 +72,13 @@ angular.module('MedicationManagementUI', ['orderService','drugOrders','session']
 
 			var ordersMap = {};
 
-			orders.forEach(function(order) {
+			orders.forEach(function f2(order) {
 				if (order.previousOrder != null) {
 					ordersMap[order.uuid] = order.previousOrder.uuid;
 				}
 			});
 
-			orders.forEach(function(order, index) {
+			orders.forEach(function f1(order, index) {
 				var revisions = [];
 
 				while (order.uuid in ordersMap) {
@@ -175,9 +175,9 @@ angular.module('MedicationManagementUI', ['orderService','drugOrders','session']
 				});
 
 
-				$scope.discontinueOrder = function(activeOrder) {
+				$scope.discontinueOrder = function() {
 
-					var dcOrder = activeOrder.createDiscontinueOrder(orderContext);
+					var dcOrder = $scope.order.createDiscontinueOrder(orderContext);
 					var draftOrders = [];
 					draftOrders.push(dcOrder);
 
@@ -201,6 +201,19 @@ angular.module('MedicationManagementUI', ['orderService','drugOrders','session']
 			}
 		}
 	},
+	])
+
+.directive('mmuiDispense', [ '$window', '$filter','SessionInfo', 'OrderEntryService',
+	function($window, $filter,SessionInfo,OrderEntryService) {
+		return {
+			restrict: 'E',
+			templateUrl: 'templates/dispenseTemplate.page',
+
+			link: function($scope, element, attrs) {
+
+			}
+		}
+	}
 	])
 
 .factory('DrugOrderModelService', function(){

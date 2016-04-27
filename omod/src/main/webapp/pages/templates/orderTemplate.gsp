@@ -21,11 +21,11 @@
 						<i class="icon-pencil"></i>
 					</a>
 
-					<a ng-href="{{order.dispenseUrl}}" ng-hide="loading" title="Dispense" style="" >
+					<a ng-click="toDispense=!toDispense" ng-hide="loading" title="Dispense" style="" >
 						<i class="icon-external-link"></i>
 					</a>
 
-					<a ng-hide="loading" data="{{order}}" title="Discontinue" ng-click="discontinueOrder(order)">
+					<a ng-hide="loading" title="Discontinue" ng-click="discontinueOrder()">
 						<i class="icon-remove"></i>
 					</a>
 				</div>
@@ -62,4 +62,6 @@
 			</div>
 		</div>
 	</div>
+
+	<mmui-dispense ng-show="toDispense"></mmui-dispense>
 </div>
