@@ -64,13 +64,11 @@ ui.includeJavascript("medicationmanagementui", "medicationManagementUi.js")
 				<span ng-show="loading" style="float: right;"><span>Loading... </span><img src="${ ui.resourceLink("uicommons", "images/spinner.gif") }" width="30px" /></span>
 			</div>
 			<div style="clear: both;"></div>
-			<div>
+			<div style="margin-top: 15px;margin-left:2px;font-weight: bold">
 				<% if (context.hasPrivilege("App: orderentryui.drugOrders")) { %>
 				<a ng-href="{{config.createOrderUrl}}">
-					<button>
 						Add
 						<i class="icon-plus-sign"></i>
-					</button>
 				</a>
 				<% } %>
 			</div>
@@ -78,8 +76,8 @@ ui.includeJavascript("medicationmanagementui", "medicationManagementUi.js")
 			<ul>
 
 				<div ng-show="!(activeDrugOrders | filter:nameText).length" style="margin-top: 3%">
-					<div>-- No active order-- </div>
-					<div>Click 'Add' to prescribe orders</div>
+					<div style="margin-bottom: 15px; font-style: italic">-- No active order-- </div>
+					<div stle>Click 'Add <i class="icon-plus-sign"></i>' to prescribe orders or '<i class="icon-refresh"></i>' to refresh</div>
 				</div>
 				<li ng-repeat="order in activeDrugOrders | visit:config.visit | active | orderBy:'dateActivated':true" style="margin-top: 20px;display: block; width:100%" >
 					<mmui-order></mmui-order>

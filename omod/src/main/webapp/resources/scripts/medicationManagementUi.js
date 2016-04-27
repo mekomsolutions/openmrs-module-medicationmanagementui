@@ -188,13 +188,13 @@ angular.module('MedicationManagementUI', ['orderService','drugOrders','session']
 						visit: $scope.config.visit
 					};
 
-					$scope.loading = true;
+					$scope.discontinue = {loading : "true"};
 					OrderEntryService.signAndSave({ draftOrders: draftOrders }, encounterContext)
 					.$promise.then(function(result) {
 						location.href = location.href;
 					}, function(errorResponse) {
 						emr.errorMessage(errorResponse.data.error.message);
-						$scope.loading = false;
+						$scope.discontinue.loading = false;
 					});
 
 				}
