@@ -198,6 +198,9 @@ angular.module('MedicationManagementUI', ['orderService','drugOrders','session']
 	function($window, $filter,SessionInfo,OrderEntryService) {
 		return {
 			restrict: 'E',
+			scope: {
+				order: '='
+			},
 			templateUrl: 'templates/orderTemplate.page',
 
 			link: function($scope, element, attrs) {
@@ -242,6 +245,9 @@ angular.module('MedicationManagementUI', ['orderService','drugOrders','session']
 	function($window, $filter,SessionInfo,OrderEntryService) {
 		return {
 			restrict: 'E',
+			scope: {
+				order: '='
+			},
 			templateUrl: 'templates/dispenseTemplate.page',
 
 			link: function($scope, element, attrs) {

@@ -61,5 +61,6 @@
 	</div>
 </div>
 
-<mmui-dispense ng-show="toDispense"></mmui-dispense>
+<mmui-dispense order="order" ng-show="toDispense"></mmui-dispense>
+
 </div>
