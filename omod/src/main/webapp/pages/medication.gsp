@@ -24,6 +24,7 @@ ui.includeJavascript("orderentryui", "order-entry.js")
 ui.includeJavascript("orderentryui", "drugOrders.js")
 
 ui.includeJavascript("medicationmanagementui", "medicationManagementUi.js")
+ui.includeCss("medicationmanagementui", "medication.css")
 
 %>
 
@@ -44,21 +45,9 @@ ui.includeJavascript("medicationmanagementui", "medicationManagementUi.js")
 
 	<div ng-controller="MMUIPageCtrl">
 
-		<div class="ui-tabs">
-			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header">
-				<li ng-repeat="setting in config.careSettings" class="ui-state-default ui-corner-top"
-				ng-class="{ 'ui-tabs-active': setting == careSetting, 'ui-state-active': setting == careSetting }">
-				<a class="ui-tabs-anchor" ng-click="setCareSetting(setting)">
-					{{ setting.display }}
-				</a>
-			</li>
-		</ul>
-
-
-
-		<div  ng-controller="MMUIOrderListCtrl" class="ui-tabs-panel ui-widget-content ui-corner-bottom">		
-
-			<h3 class="title" style="float:left; margin-top:20px">Current Orders</h3>
+		<div  ng-controller="MMUIOrderListCtrl" >
+			<h3 class="title" style="float:left; margin-top:20px">Current Orders for </h3>
+				<select ng-model="careSetting" ng-options="setting.name for setting in careSettings" ng-change="setCareSetting(careSetting)"></select>
 			<div>
 				<span ng-hide="loading" ng-click="loadData()" style="float: right"><i class="icon-refresh"></i></span>
 				<span ng-show="loading" style="float: right;"><span>Loading... </span><img src="${ ui.resourceLink("uicommons", "images/spinner.gif") }" width="30px" /></span>
@@ -67,8 +56,8 @@ ui.includeJavascript("medicationmanagementui", "medicationManagementUi.js")
 			<div style="margin-top: 15px;margin-left:2px;font-weight: bold">
 				<% if (context.hasPrivilege("App: orderentryui.drugOrders")) { %>
 				<a ng-href="{{config.createOrderUrl}}">
-						Add
-						<i class="icon-plus-sign"></i>
+					Add
+					<i class="icon-plus-sign"></i>
 				</a>
 				<% } %>
 			</div>
@@ -98,9 +87,6 @@ ui.includeJavascript("medicationmanagementui", "medicationManagementUi.js")
 
 				</ul>
 			</div>
-
 		</div>
 	</div>
-
-</div>
 </div>
