@@ -96,6 +96,15 @@ describe("Medication Management UI", function() {
 				OrderService = _OrderService_;
 				DrugOrderModelService = _DrugOrderModelService_;
 
+				$scope.careSettings = [
+				{
+					'uuid':'1234678-85432'
+				},
+				{
+					'uuid':'0987698-66543'
+				}
+				];
+
 				$window.OpenMRS = {};
 				$window.OpenMRS.drugOrdersConfig = {
 					patient: {
