@@ -1,7 +1,7 @@
 <div>
 	<table  style="border-bottom: 3px solid #00463f;">
 		<tr title="Click to get more details" style="height:40px">
-		<td ng-click="showDetails=!showDetails" >
+			<td ng-click="showDetails=!showDetails" >
 				<span ng-show="order.isActive()" class="status active"></span>
 				<span ng-hide="order.isActive()" class="status inactive" style="background-color:#999999"></span>
 				<span style="font-weight: bold;">{{ order.drug.display }}: </span>
@@ -59,6 +59,8 @@
 		</div>
 	</div>
 
-	<mmui-dispense order="order" ng-show="toDispense"></mmui-dispense>
+	<span ng-if="config.quantityUnits">
+		<mmui-dispense order="order" config="config" ng-show="toDispense"></mmui-dispense>
+	</span>
 
 </div>

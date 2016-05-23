@@ -1,4 +1,4 @@
-angular.module('MedicationManagementUI', ['orderService','drugOrders','session'])
+angular.module('MedicationManagementUI', ['orderService', 'encounterService','drugOrders','session'])
 
 .controller('MMUIPageCtrl', ['$scope', '$window', function($scope, $window) {
 
@@ -56,6 +56,7 @@ angular.module('MedicationManagementUI', ['orderService','drugOrders','session']
 							results[i] = setDispenseUrl(results[i]);
 						} 
 						$scope.activeDrugOrders = results.concat($scope.activeDrugOrders);
+						$scope.activeDrugOrders = DrugOrderModelService.wrapOrders($scope.activeDrugOrders);
 					})
 					);
 
@@ -68,15 +69,14 @@ angular.module('MedicationManagementUI', ['orderService','drugOrders','session']
 						status: 'inactive'
 					}).then(function(results) {
 						$scope.pastDrugOrders = results.concat($scope.pastDrugOrders);
+						$scope.pastDrugOrders = DrugOrderModelService.wrapOrders($scope.pastDrugOrders);
 					})
 					);
 			}
 
 			/* We store all the promises in an array and apply logic when they are all resolved */
 			$q.all($scope.promiseArray).then(function() {
-				$scope.activeDrugOrders = DrugOrderModelService.wrapOrders($scope.activeDrugOrders);
-				$scope.pastDrugOrders = DrugOrderModelService.wrapOrders($scope.pastDrugOrders);
-
+				
 				$scope.allDrugOrders = $scope.activeDrugOrders.concat($scope.pastDrugOrders);
 				$scope.allDrugOrders = getRevisions($scope.allDrugOrders);
 
@@ -132,8 +132,11 @@ angular.module('MedicationManagementUI', ['orderService','drugOrders','session']
 
 .filter('active', function () {
 	return function (items, isActive) {
-
 		
+		if (items.length == 0) {
+			return items;
+		}
+
 		var itemsToReturn = [];
 
 		if (typeof isActive === 'undefined') {
@@ -144,11 +147,12 @@ angular.module('MedicationManagementUI', ['orderService','drugOrders','session']
 
 		for (var i = 0; i < items.length ; i++) {
 			var item = items[i];
-			if (item.isActive() != null) {
+
+			if (item.isActive() != null || !(typeof item.isActive() === 'undefined') ) {
 				if (item.isActive() == isActive) {
 					itemsToReturn.push(item);
 				}
-			} 		
+			}
 		}
 		return itemsToReturn;
 	}
@@ -199,7 +203,8 @@ angular.module('MedicationManagementUI', ['orderService','drugOrders','session']
 		return {
 			restrict: 'E',
 			scope: {
-				order: '='
+				order: '=',
+				qtyUnits: '='
 			},
 			templateUrl: 'templates/orderTemplate.page',
 
@@ -241,17 +246,57 @@ angular.module('MedicationManagementUI', ['orderService','drugOrders','session']
 	},
 	])
 
-.directive('mmuiDispense', [ '$window', '$filter','SessionInfo', 'OrderEntryService',
-	function($window, $filter,SessionInfo,OrderEntryService) {
+.directive('mmuiDispense', [ '$window', '$filter','SessionInfo', 'OrderEntryService', 'Encounter',
+	function($window, $filter, SessionInfo, OrderEntryService, Encounter) {
 		return {
 			restrict: 'E',
 			scope: {
-				order: '='
+				order: '=',
+				config: '='
 			},
 			templateUrl: 'templates/dispenseTemplate.page',
 
-			link: function($scope, element, attrs) {
+			link: function(scope, element, attrs) {
 
+				function replaceWithUuids(obj, props) {
+					var replaced = angular.extend({}, obj);
+					_.each(props, function(prop) {
+						if (replaced[prop] && replaced[prop].uuid) {
+							replaced[prop] = replaced[prop].uuid;
+						}
+					});
+					return replaced;
+				}
+
+				scope.createDispense =  function () {
+
+					var copyProperties = _.pick(scope.order,
+						'action','previousOrder','commentToFulfiller', 'drug', 'dosingType', 'numRefills', 'quantity', 'quantityUnits', 'dose',
+						'doseUnits', 'frequency', 'asNeeded', 'asNeededCondition', 'route', 'duration', 'durationUnits',
+						'dosingInstructions', 'careSetting'
+						);
+					var override = {
+						quantity: scope.order.quantity,
+						quantityUnits: scope.order.quantityUnits
+					}
+
+					orderToSave = $.extend(copyProperties, override);
+
+					orderToSave = replaceWithUuids(orderToSave, ['drug', 'doseUnits', 'frequency', 'quantityUnits',
+						'durationUnits', 'route', 'previousOrder', 'careSetting', 'patient', 'concept', 'orderer',
+						'orderReason'
+						]);
+
+					var encounter = {
+						uuid: scope.order.encounter.uuid,
+						order: orderToSave
+					};
+
+					var saved = Encounter.save(encounter);
+					saved.$promise.then(function(encounter) {
+						$rootScope.$broadcast("visit-changed", encounter.visit);
+					});
+				}
 			}
 		}
 	}

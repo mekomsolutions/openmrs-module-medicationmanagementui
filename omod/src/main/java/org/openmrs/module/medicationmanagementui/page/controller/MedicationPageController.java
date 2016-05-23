@@ -1,10 +1,13 @@
 package org.openmrs.module.medicationmanagementui.page.controller;
 
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.openmrs.CareSetting;
+import org.openmrs.Concept;
 import org.openmrs.EncounterType;
 import org.openmrs.Patient;
 import org.openmrs.Visit;
@@ -58,6 +61,11 @@ public class MedicationPageController {
 		
 		String medicationDispenseUrl = ui.pageLink("medicationdispense", "dispense", SimpleObject.create("patient", patient.getId(),  "returnUrl", ui.thisUrl()));
 		jsonConfig.put("medicationDispenseUrl", medicationDispenseUrl);
+		
+		List<Concept> dispensingUnits = orderService.getDrugDispensingUnits();
+		Set<Concept> quantityUnits = new LinkedHashSet<Concept>();
+		quantityUnits.addAll(dispensingUnits);
+		jsonConfig.put("quantityUnits", convertToFull(dispensingUnits));
 		
 		model.put("patient", patient);
 		model.put("jsonConfig", ui.toJson(jsonConfig));
