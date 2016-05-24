@@ -1,4 +1,4 @@
-angular.module('MedicationManagementUI', ['orderService', 'encounterService', 'obsService','drugOrders','session'])
+angular.module('MedicationManagementUI', ['orderService', 'encounterService','drugOrders','session'])
 
 .controller('MMUIPageCtrl', ['$scope', '$window', function($scope, $window) {
 
@@ -250,8 +250,8 @@ angular.module('MedicationManagementUI', ['orderService', 'encounterService', 'o
 	},
 	])
 
-.directive('mmuiDispense', ['$rootScope', '$window', '$filter','SessionInfo', 'OrderEntryService', 'Encounter', 'Obs',
-	function($rootScope, $window, $filter, SessionInfo, OrderEntryService, Encounter, Obs) {
+.directive('mmuiDispense', ['$rootScope', '$window', '$filter','SessionInfo', 'OrderEntryService', 'Encounter',
+	function($rootScope, $window, $filter, SessionInfo, OrderEntryService, Encounter) {
 		return {
 			restrict: 'E',
 			scope: {
