@@ -53,8 +53,11 @@ public class MedicationPageController {
 
 		jsonConfig.put("patient", convertToFull(patient));
 
-		EncounterType encounterType = encounterService.getEncounterTypeByUuid(MedicationManagementUIConstants.ORDER_ENCOUNTER_TYPE_UUID);
-		jsonConfig.put("drugOrderEncounterType", convertToFull(encounterType));
+		EncounterType orderEncounterType = encounterService.getEncounterTypeByUuid(MedicationManagementUIConstants.ORDER_ENCOUNTER_TYPE_UUID);
+		jsonConfig.put("drugOrderEncounterType", convertToFull(orderEncounterType));
+		
+		EncounterType dispenseEncounterType = encounterService.getEncounterTypeByUuid(MedicationManagementUIConstants.DISPENSE_ENCOUNTER_TYPE_UUID);
+		jsonConfig.put("dispenseEncounterType", convertToFull(dispenseEncounterType));
 		
 		String orderEntryUiUrl = ui.pageLink("orderentryui", "drugOrders", SimpleObject.create("patientId", patient.getId(), "patient", patient.getId(),  "returnUrl", ui.thisUrl()));
 		jsonConfig.put("orderEntryUiUrl", orderEntryUiUrl);

@@ -1,4 +1,4 @@
-angular.module('MedicationManagementUI', ['orderService', 'encounterService','drugOrders','session'])
+angular.module('MedicationManagementUI', ['orderService', 'encounterService', 'obsService','drugOrders','session'])
 
 .controller('MMUIPageCtrl', ['$scope', '$window', function($scope, $window) {
 
@@ -21,8 +21,8 @@ angular.module('MedicationManagementUI', ['orderService', 'encounterService','dr
 
 }])
 
-.controller('MMUIOrderListCtrl', ['$scope', '$window', '$q', 'OrderService', 'DrugOrderModelService',
-	function($scope, $window, $q, OrderService, DrugOrderModelService) {
+.controller('MMUIOrderListCtrl', ['$rootScope', '$scope', '$window', '$q', 'OrderService', 'DrugOrderModelService',
+	function($rootScope, $scope, $window, $q, OrderService, DrugOrderModelService) {
 
 		/* define a custom representation of an Order, so to retrieve the full encounter */
 		customRep = 'custom:(action:ref,asNeeded:ref,asNeededCondition:ref,autoExpireDate:ref,brandName:ref,careSetting:ref,commentToFulfiller:ref,concept:ref,dateActivated:ref,dateStopped:ref,dispenseAsWritten:ref,display:ref,dose:ref,doseUnits:ref,dosingInstructions:ref,dosingType:ref,drug:ref,duration:ref,durationUnits:ref,encounter:full,frequency:ref,instructions:ref,numRefills:ref,orderNumber:ref,orderReason:ref,orderReasonNonCoded:ref,orderer:ref,patient:ref,previousOrder:ref,quantity:ref,quantityUnits:ref,route:ref,urgency:ref,uuid:ref,links:ref';
@@ -85,6 +85,10 @@ angular.module('MedicationManagementUI', ['orderService', 'encounterService','dr
 		}
 
 		$scope.loadData();
+
+		$rootScope.$on('relaodOrders', function () {
+          $scope.loadData();
+        })
 
 		function getRevisions(orders) {
 
@@ -246,8 +250,8 @@ angular.module('MedicationManagementUI', ['orderService', 'encounterService','dr
 	},
 	])
 
-.directive('mmuiDispense', [ '$window', '$filter','SessionInfo', 'OrderEntryService', 'Encounter',
-	function($window, $filter, SessionInfo, OrderEntryService, Encounter) {
+.directive('mmuiDispense', ['$rootScope', '$window', '$filter','SessionInfo', 'OrderEntryService', 'Encounter', 'Obs',
+	function($rootScope, $window, $filter, SessionInfo, OrderEntryService, Encounter, Obs) {
 		return {
 			restrict: 'E',
 			scope: {
@@ -268,33 +272,54 @@ angular.module('MedicationManagementUI', ['orderService', 'encounterService','dr
 					return replaced;
 				}
 
-				scope.createDispense =  function () {
+				function uuidIfNotNull(obj) {
+					return obj ? obj.uuid : null;
+				}
 
-					var copyProperties = _.pick(scope.order,
-						'action','previousOrder','commentToFulfiller', 'drug', 'dosingType', 'numRefills', 'quantity', 'quantityUnits', 'dose',
-						'doseUnits', 'frequency', 'asNeeded', 'asNeededCondition', 'route', 'duration', 'durationUnits',
-						'dosingInstructions', 'careSetting'
-						);
-					var override = {
-						quantity: scope.order.quantity,
-						quantityUnits: scope.order.quantityUnits
+				scope.quantity = "";
+				scope.quantityUnit = "";
+
+				scope.createDispense = function () {
+
+					/* create encounter, or retrieve existing one */
+					var encounter = {};
+
+					if (scope.order.dispenseEncounter) {
+						encounter.uuid = scope.order.dispenseEncounter.uuid;
+						encounter.previousObs = scope.order.dispenseEncounter.obs;
+						encounter.location = uuidIfNotNull(scope.config.location);
+					} else {
+						encounter.encounterType = scope.config.dispenseEncounterType;
+						encounter.patient = scope.config.patient.uuid;
+						encounter.visit = uuidIfNotNull(scope.config.visit);
+						encounter.location = uuidIfNotNull(scope.config.location);
 					}
 
-					orderToSave = $.extend(copyProperties, override);
+					/* create dispense observation */
+					encounter.obs = []
 
-					orderToSave = replaceWithUuids(orderToSave, ['drug', 'doseUnits', 'frequency', 'quantityUnits',
-						'durationUnits', 'route', 'previousOrder', 'careSetting', 'patient', 'concept', 'orderer',
-						'orderReason'
-						]);
+					var drugObservation = {
+						order: scope.order.uuid,
+						concept: "1282AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+						value: scope.order.concept.uuid
+					}
+					var doseObservation = {
+						order: scope.order.uuid,
+						concept: "160856AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+						value: scope.quantity
+					}
+					var unitObservation = {
+						order: scope.order.uuid,
+						concept: "161563AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+						value: scope.quantityUnit.uuid
+					}
 
-					var encounter = {
-						uuid: scope.order.encounter.uuid,
-						order: orderToSave
-					};
-
-					var saved = Encounter.save(encounter);
-					saved.$promise.then(function(encounter) {
-						$rootScope.$broadcast("visit-changed", encounter.visit);
+					encounter.obs.push(drugObservation,doseObservation,unitObservation);
+					
+					Encounter.save(encounter).$promise.then(function (results) {
+						/* broadcast a reload event */
+						$rootScope.$broadcast('relaodOrders');
+						console.log(results);
 					});
 				}
 			}
