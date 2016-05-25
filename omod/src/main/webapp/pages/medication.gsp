@@ -24,8 +24,16 @@ ui.includeJavascript("orderentryui", "order-model.js")
 ui.includeJavascript("orderentryui", "order-entry.js")
 ui.includeJavascript("orderentryui", "drugOrders.js")
 
+
 ui.includeJavascript("medicationmanagementui", "medicationManagementUi.js")
+
+ui.includeJavascript("medicationmanagementui", "directives/order.js")
+ui.includeJavascript("medicationmanagementui", "directives/dispense.js")
+
+ui.includeJavascript("medicationmanagementui", "filters/filters.js")
+
 ui.includeCss("medicationmanagementui", "medication.css")
+
 
 %>
 
@@ -42,7 +50,7 @@ ui.includeCss("medicationmanagementui", "medication.css")
 </script>
 
 
-<div ng-app="MedicationManagementUI">
+<div ng-app="MedicationManagementUI.main">
 
 	<div ng-controller="MMUIPageCtrl">
 
@@ -70,7 +78,7 @@ ui.includeCss("medicationmanagementui", "medication.css")
 					<div stle>Click 'Add <i class="icon-plus-sign"></i>' to prescribe orders or '<i class="icon-refresh"></i>' to refresh</div>
 				</div>
 				<li ng-repeat="order in activeDrugOrders | careSetting:careSetting | visit:config.visit | active | orderBy:'dateActivated':true" style="margin-top: 20px;display: block; width:100%" >
-					<mmui-order order="order"></mmui-order>
+					<mmui-order order="order" config="config"></mmui-order>
 				</li>
 
 			</ul>
@@ -83,7 +91,7 @@ ui.includeCss("medicationmanagementui", "medication.css")
 				<a ng-click="showInactive=false">(Show less)</a>
 				<ul>
 					<li ng-repeat="order in pastDrugOrders | careSetting:careSetting | visit:config.visit | orderBy:'dateActivated':true" style="margin-top: 20px;display: block; width:100%" >
-						<mmui-order order="order"></mmui-order>
+						<mmui-order order="order" config="config"></mmui-order>
 					</li>
 
 				</ul>

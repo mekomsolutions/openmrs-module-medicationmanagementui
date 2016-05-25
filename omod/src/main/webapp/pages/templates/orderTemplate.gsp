@@ -6,6 +6,9 @@
 				<span ng-hide="order.isActive()" class="status inactive" style="background-color:#999999"></span>
 				<span style="font-weight: bold;">{{ order.drug.display }}: </span>
 				<span>{{ order | instructions }}</span>
+
+				<mmui-dispense-tag order="order" config="config"></mmui-dispense-tag>
+
 			</td>
 			<td ng-click="showDetails=!showDetails">
 				<span> {{order | dates }}</span>              
@@ -29,9 +32,9 @@
 		</tr>
 	</table>
 
-	<div ng-show="showDetails"  style="padding-left: 20px; padding-right: 20px; padding-bottom: 20px;padding-top: 5px border: solid 1px #eeeeee; background-color:  #F9F9F9; ">
+	<div ng-show="showDetails"  style="padding-left: 20px; padding-right: 20px; padding-bottom: 20px;padding-top: 5px ;border: solid 1px #eeeeee; background-color:  #F9F9F9; ">
 
-		<div style="margin-top:15px; margin-bottom: 15px">
+		<div style="margin-bottom: 15px; margin-top:15px; ">
 			<div>
 				<table style="width: 100%">
 					<thead>
