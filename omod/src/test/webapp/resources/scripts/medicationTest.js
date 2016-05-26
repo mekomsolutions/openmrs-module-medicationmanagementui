@@ -109,14 +109,13 @@ describe("Medication Management UI", function() {
 				}
 				];
 
-				$window.OpenMRS = {};
-				$window.OpenMRS.drugOrdersConfig = {
+				$scope.config = {
 					patient: {
 						uuid: "123"
 					},
 					visit: ""
 				}
-
+				
 				createController = function() {
 					$controller('MMUIOrderListCtrl', {
 						$scope: $scope,
