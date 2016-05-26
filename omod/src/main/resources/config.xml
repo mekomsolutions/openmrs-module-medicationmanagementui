@@ -23,6 +23,10 @@
 		<require_module version="${orderentryuiVersion}">
 			org.openmrs.module.orderentryui
 		</require_module>
+		
+		<require_module version="${webservicesRestModuleVersion}">
+			org.openmrs.module.webservices.rest
+		</require_module>
 	</require_modules>
 	
 	<!-- Module Activator -->
