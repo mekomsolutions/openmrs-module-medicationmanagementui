@@ -65,15 +65,19 @@ public class MedicationPageController {
 
 		Map<String, Object> dispenseConfig = new LinkedHashMap<String, Object>();
 
-		Concept qtyDispenseConcept = conceptService.getConceptByUuid(MedicationManagementUIConstants.QTY_DISPENSE_CONCEPT_MAPPING);
-		Concept qtyUnitsDispenseConcepts = conceptService.getConceptByUuid(MedicationManagementUIConstants.QTY_UNITS_DISPENSE_CONCEPT_MAPPING);
-		Concept medicationDispenseConcepts = conceptService.getConceptByUuid(MedicationManagementUIConstants.MEDICATION_DISPENSE_CONCEPT_MAPPING);
-		Concept orderDispenseConcepts = conceptService.getConceptByUuid(MedicationManagementUIConstants.ORDER_DISPENSE_CONCEPT_MAPPING);
+		Concept qtyDispenseConcept  = conceptService.getConceptByMapping(MedicationManagementUIConstants.QTY_DISPENSE_CONCEPT_MAPPING.split(":")[1], 
+				MedicationManagementUIConstants.QTY_DISPENSE_CONCEPT_MAPPING.split(":")[0]);
+		Concept qtyUnitsDispenseConcepts = conceptService.getConceptByMapping(MedicationManagementUIConstants.QTY_UNITS_DISPENSE_CONCEPT_MAPPING.split(":")[1], 
+				MedicationManagementUIConstants.QTY_UNITS_DISPENSE_CONCEPT_MAPPING.split(":")[0]);
+		Concept medicationDispenseConcepts = conceptService.getConceptByMapping(MedicationManagementUIConstants.MEDICATION_DISPENSE_CONCEPT_MAPPING.split(":")[1],
+				MedicationManagementUIConstants.MEDICATION_DISPENSE_CONCEPT_MAPPING.split(":")[0]);
+		Concept orderDispenseConcepts = conceptService.getConceptByMapping(MedicationManagementUIConstants.ORDER_DISPENSE_CONCEPT_MAPPING.split(":")[1],
+				MedicationManagementUIConstants.ORDER_DISPENSE_CONCEPT_MAPPING.split(":")[0]);
 
-		dispenseConfig.put("qtyDispenseConcept", qtyDispenseConcept);
-		dispenseConfig.put("qtyUnitsDispenseConcept", qtyUnitsDispenseConcepts);
-		dispenseConfig.put("medicationDispenseConcept", medicationDispenseConcepts);
-		dispenseConfig.put("orderDispenseConcept", orderDispenseConcepts);
+		dispenseConfig.put("qtyDispenseConcept", convertToFull(qtyDispenseConcept));
+		dispenseConfig.put("qtyUnitsDispenseConcept", convertToFull(qtyUnitsDispenseConcepts));
+		dispenseConfig.put("medicationDispenseConcept", convertToFull(medicationDispenseConcepts));
+		dispenseConfig.put("orderDispenseConcept", convertToFull(orderDispenseConcepts));
 
 		EncounterType dispenseEncounterType = encounterService.getEncounterTypeByUuid(MedicationManagementUIConstants.DISPENSE_ENCOUNTER_TYPE_UUID);
 		dispenseConfig.put("dispenseEncounterType", convertToFull(dispenseEncounterType));

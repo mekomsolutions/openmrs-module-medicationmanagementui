@@ -27,8 +27,6 @@ angular.module('MedicationManagementUI.main', ['orderService', 'encounterService
 		/* define a custom representation of an Order, so to retrieve the full encounter */
 		customRep = 'custom:(action:ref,asNeeded:ref,asNeededCondition:ref,autoExpireDate:ref,brandName:ref,careSetting:ref,commentToFulfiller:ref,concept:ref,dateActivated:ref,dateStopped:ref,dispenseAsWritten:ref,display:ref,dose:ref,doseUnits:ref,dosingInstructions:ref,dosingType:ref,drug:ref,duration:ref,durationUnits:ref,encounter:full,frequency:ref,instructions:ref,numRefills:ref,orderNumber:ref,orderReason:ref,orderReasonNonCoded:ref,orderer:ref,patient:ref,previousOrder:ref,quantity:ref,quantityUnits:ref,route:ref,urgency:ref,uuid:ref,links:ref';
 
-		$scope.config = $window.OpenMRS.drugOrdersConfig;
-
 		promiseArray = [];
 
 		$scope.loadData = function() {

@@ -7,11 +7,11 @@ angular.module('MedicationManagementUI.order',[])
 			scope: {
 				order: '=',
 				config: '=',
-				qtyUnits: '='
+				dispenseConfig: '='
 			},
 			templateUrl: 'templates/orderTemplate.page',
 
-			link: function($scope, element, attrs) {
+			link: function(scope, element, attrs) {
 
 				var orderContext = {};
 				SessionInfo.get().$promise.then(function(info) {
@@ -19,26 +19,26 @@ angular.module('MedicationManagementUI.order',[])
 				});
 
 
-				$scope.discontinueOrder = function() {
+				scope.discontinueOrder = function() {
 
-					var dcOrder = $scope.order.createDiscontinueOrder(orderContext);
+					var dcOrder = scope.order.createDiscontinueOrder(orderContext);
 					var draftOrders = [];
 					draftOrders.push(dcOrder);
 
 					var encounterContext = {
-						patient: $scope.config.patient,
-						encounterType: $scope.config.drugOrderEncounterType,
+						patient: scope.config.patient,
+						encounterType: scope.config.drugOrderEncounterType,
 						location: null,
-						visit: $scope.config.visit
+						visit: scope.config.visit
 					};
 
-					$scope.discontinue = {loading : "true"};
+					scope.discontinue = {loading : "true"};
 					OrderEntryService.signAndSave({ draftOrders: draftOrders }, encounterContext)
 					.$promise.then(function(result) {
 						location.href = location.href;
 					}, function(errorResponse) {
 						emr.errorMessage(errorResponse.data.error.message);
-						$scope.discontinue.loading = false;
+						scope.discontinue.loading = false;
 					});
 
 				}

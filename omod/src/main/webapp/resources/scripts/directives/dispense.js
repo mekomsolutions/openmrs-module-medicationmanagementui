@@ -38,6 +38,9 @@ angular.module('MedicationManagementUI.dispense', [])
 				scope.quantity = "";
 				scope.quantityUnit = "";
 
+				scope.orderConfig;
+				scope.dispenseConfig;
+
 				scope.createDispense = function () {
 
 					/* create encounter, or retrieve existing one */
@@ -49,7 +52,7 @@ angular.module('MedicationManagementUI.dispense', [])
 						encounter.location = uuidIfNotNull(scope.orderConfig.location);
 					} else {
 						encounter.encounterType = scope.dispenseConfig.dispenseEncounterType;
-						encounter.patient = scope.dispenseConfig.patient.uuid;
+						encounter.patient = scope.orderConfig.patient.uuid;
 						encounter.visit = uuidIfNotNull(scope.orderConfig.visit);
 						encounter.location = uuidIfNotNull(scope.orderConfig.location);
 					}
@@ -57,28 +60,27 @@ angular.module('MedicationManagementUI.dispense', [])
 					/* create dispense observation */
 					encounter.obs = []
 
-					var drugObservation = {
+					var drugObs = {
 						order: scope.order.uuid,
 						concept: scope.dispenseConfig.medicationDispenseConcept.uuid,
 						value: scope.order.concept.uuid
 					}
-					var doseObservation = {
+					var doseObs = {
 						order: scope.order.uuid,
 						concept: scope.dispenseConfig.qtyDispenseConcept.uuid,
 						value: scope.quantity
 					}
-					var unitObservation = {
+					var unitObs = {
 						order: scope.order.uuid,
 						concept: scope.dispenseConfig.qtyUnitsDispenseConcept.uuid,
 						value: scope.quantityUnit.uuid
 					}
 
-					encounter.obs.push(drugObservation,doseObservation,unitObservation);
+					encounter.obs.push(drugObs,doseObs,unitObs);
 
 					Encounter.save(encounter).$promise.then(function (results) {
 						/* broadcast a reload event */
 						$rootScope.$broadcast('relaodOrders');
-						console.log(results);
 					});
 				}
 			}
@@ -100,15 +102,22 @@ angular.module('MedicationManagementUI.dispense', [])
 			link: function(scope, element, attrs) {
 
 				ObsService.getObs({
-					patient: scope.config.patient.uuid,
+					v:'custom:(order:ref,value:ref,concept:ref)',
+					patient: scope.order.patient.uuid,
 					order: scope.order.uuid
 				}).then(function (results) {
-					orderObservations = results;
+					var orderObservations = results;
 
-					dispenseObs = _.filter(orderObservations, function (obs) {
-						obs.concept == scope.config.dispenseConcepts
-						return 
-					})
+
+					scope.dispenseObservations = orderObservations;
+
+					scope.qtyDispenseObs = _.find(orderObservations, function (obs) {
+						return obs.concept.uuid == dispenseConfig.qtyDispenseConcept.uuid
+					});
+
+					scope.qtyUnitsDispenseObs = _.find(orderObservations, function (obs) {
+						return obs.concept.uuid == dispenseConfig.qtyUnitsDispenseConcept.uuid
+					});
 
 
 				})
@@ -118,14 +127,3 @@ angular.module('MedicationManagementUI.dispense', [])
 	])
 
 
-.filter('mostRecentDispense', function () {
-	return function (observations, dispenseConcepts) {
-		
-		var mostRecentDispense = _.filter(observations, function (obs) {
-			return obs.order.uuid == order.uuid
-		});
-
-		return latestDispense;
-	}
-
-})
