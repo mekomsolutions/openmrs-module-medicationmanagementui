@@ -43,7 +43,9 @@ ui.includeCss("medicationmanagementui", "medication.css")
 	];
 
 	window.OpenMRS = window.OpenMRS || {};
-	window.OpenMRS.drugOrdersConfig = ${ jsonConfig };
+	window.orderConfig = ${ jsonConfig };
+
+	window.dispenseConfig = ${ dispenseConfig };
 
 </script>
 

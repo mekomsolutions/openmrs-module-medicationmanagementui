@@ -2,7 +2,7 @@ angular.module('MedicationManagementUI.main', ['orderService', 'encounterService
 
 .controller('MMUIPageCtrl', ['$scope', '$window', function($scope, $window) {
 
-	$scope.config = $window.OpenMRS.drugOrdersConfig;
+	$scope.config = $window.orderConfig;
 	$scope.careSettings = $scope.config.careSettings;
 	$scope.careSetting = $scope.config.intialCareSetting ?
 	_.findWhere(config.careSettings, { uuid: config.intialCareSetting }) :
@@ -217,16 +217,4 @@ angular.module('MedicationManagementUI.main', ['orderService', 'encounterService
 		}
 		return itemsToReturn;
 	}
-})
-
-.filter('latestDispense', function () {
-	return function (observations, order) {
-		
-		var latestDispense = _.filter(observations, function (obs) {
-			return obs.order.uuid == order.uuid
-		});
-
-		return latestDispense;
-	}
-
 })
