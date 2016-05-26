@@ -30,8 +30,6 @@ ui.includeJavascript("medicationmanagementui", "medicationManagementUi.js")
 ui.includeJavascript("medicationmanagementui", "directives/order.js")
 ui.includeJavascript("medicationmanagementui", "directives/dispense.js")
 
-ui.includeJavascript("medicationmanagementui", "filters/filters.js")
-
 ui.includeCss("medicationmanagementui", "medication.css")
 
 

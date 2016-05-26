@@ -4,10 +4,13 @@ describe("Medication Management UI", function() {
 		// creating fake dependencies to instanciate our module
 		angular.module('orderService', []);
 		angular.module('encounterService', []);
+		angular.module('obsService', []);
 		angular.module('drugOrders', []);
 		angular.module('session', []);
+		angular.module('MedicationManagementUI.order', []);
+		angular.module('MedicationManagementUI.dispense', []);
 
-		module('MedicationManagementUI');
+		module('MedicationManagementUI.main');
 	});
 
 	describe("MMUIOrderListCtrl unit tests", function() {

@@ -21,8 +21,8 @@ angular.module('MedicationManagementUI.main', ['orderService', 'encounterService
 
 }])
 
-.controller('MMUIOrderListCtrl', ['$rootScope', '$scope', '$window', '$q', 'OrderService', 'EncounterService', 'DrugOrderModelService',
-	function($rootScope, $scope, $window, $q, OrderService, EncounterService, DrugOrderModelService) {
+.controller('MMUIOrderListCtrl', ['$rootScope', '$scope', '$window', '$q', 'OrderService', 'DrugOrderModelService',
+	function($rootScope, $scope, $window, $q, OrderService, DrugOrderModelService) {
 
 		/* define a custom representation of an Order, so to retrieve the full encounter */
 		customRep = 'custom:(action:ref,asNeeded:ref,asNeededCondition:ref,autoExpireDate:ref,brandName:ref,careSetting:ref,commentToFulfiller:ref,concept:ref,dateActivated:ref,dateStopped:ref,dispenseAsWritten:ref,display:ref,dose:ref,doseUnits:ref,dosingInstructions:ref,dosingType:ref,drug:ref,duration:ref,durationUnits:ref,encounter:full,frequency:ref,instructions:ref,numRefills:ref,orderNumber:ref,orderReason:ref,orderReasonNonCoded:ref,orderer:ref,patient:ref,previousOrder:ref,quantity:ref,quantityUnits:ref,route:ref,urgency:ref,uuid:ref,links:ref';
@@ -151,3 +151,82 @@ angular.module('MedicationManagementUI.main', ['orderService', 'encounterService
 })
 
 
+.filter('active', function () {
+	return function (items, isActive) {
+
+		if (items.length == 0) {
+			return items;
+		}
+
+		var itemsToReturn = [];
+
+		if (typeof isActive === 'undefined') {
+			isActive = true;
+		}
+
+		if (items === undefined) return itemsToReturn;
+
+		for (var i = 0; i < items.length ; i++) {
+			var item = items[i];
+
+			if (item.isActive() != null || !(typeof item.isActive() === 'undefined') ) {
+				if (item.isActive() == isActive) {
+					itemsToReturn.push(item);
+				}
+			}
+		}
+		return itemsToReturn;
+	}
+})
+
+.filter('visit', function () {
+	return function (items, visit) {
+
+		if (visit === null || typeof visit === 'undefined') {
+			return items
+		};
+
+		var itemsToReturn = [];
+
+		if (items === undefined) return itemsToReturn;
+
+		for (var i = 0; i < items.length ; i++) {
+			var item = items[i];
+			if (item.encounter.visit != null) {
+				if (item.encounter.visit.uuid == visit.uuid) {
+					itemsToReturn.push(item);
+				}
+			} 		
+		}
+		return itemsToReturn;
+	}
+})
+
+.filter('careSetting', function () {
+	return function (items, careSetting) {
+
+		var itemsToReturn = [];
+
+		for (var i = 0; i < items.length ; i++) {
+			var item = items[i];
+			if (item.careSetting != null) {
+				if (item.careSetting.uuid == careSetting.uuid) {
+					itemsToReturn.push(item);
+				}
+			} 		
+		}
+		return itemsToReturn;
+	}
+})
+
+.filter('latestDispense', function () {
+	return function (observations, order) {
+		
+		var latestDispense = _.filter(observations, function (obs) {
+			return obs.order.uuid == order.uuid
+		});
+
+		return latestDispense;
+	}
+
+})
