@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.openmrs.Obs;
 import org.openmrs.Order;
 import org.openmrs.Patient;
@@ -27,37 +29,42 @@ import org.springframework.stereotype.Component;
 @Component
 public class ObservationByOrderSearchHandler implements SearchHandler {
 
-    private final SearchConfig searchConfig = new SearchConfig("byOrder", RestConstants.VERSION_1 + "/obs", Arrays.asList("1.8.*", "1.9.*", "1.10.*", "1.11.*", "1.12.*", "2.0.*"),
-            Arrays.asList(new SearchQuery.Builder("Allows you to find Observations by patient and order").withRequiredParameters("patient", "order").build()));
+	protected static final Log log = LogFactory.getLog(ObservationByOrderSearchHandler.class);
 
-    /**
-     * @see org.openmrs.module.webservices.rest.web.resource.api.SearchHandler#getSearchConfig()
-     */
-    @Override
-    public SearchConfig getSearchConfig() {
-        return this.searchConfig;
-    }
-    
-    /**
-     * @see org.openmrs.module.webservices.rest.web.resource.api.SearchHandler#search(org.openmrs.module.webservices.rest.web.RequestContext)
-     */
-    @Override
-    public PageableResult search(RequestContext context) throws ResponseException {
+	private final SearchConfig searchConfig = new SearchConfig("byOrder", RestConstants.VERSION_1 + "/obs", Arrays.asList("1.8.*", "1.9.*", "1.10.*", "1.11.*", "1.12.*", "2.0.*"),
+			Arrays.asList(new SearchQuery.Builder("Allows you to find Observations by patient and order").withRequiredParameters("patient", "order").build()));
 
-    	String patientUuid = context.getRequest().getParameter("patient");
+	/**
+	 * @see org.openmrs.module.webservices.rest.web.resource.api.SearchHandler#getSearchConfig()
+	 */
+	@Override
+	public SearchConfig getSearchConfig() {
+		return this.searchConfig;
+	}
+
+	/**
+	 * @see org.openmrs.module.webservices.rest.web.resource.api.SearchHandler#search(org.openmrs.module.webservices.rest.web.RequestContext)
+	 */
+	@Override
+	public PageableResult search(RequestContext context) throws ResponseException {
+
+		String patientUuid = context.getRequest().getParameter("patient");
 		String orderUuid = context.getRequest().getParameter("order");
 		if (patientUuid != null) {
 			Patient patient = ((PatientResource1_8) Context.getService(RestService.class).getResourceBySupportedClass(
 					Patient.class)).getByUniqueId(patientUuid);
-			if (patient == null)
+			if (patient == null) {
+				log.warn("Patient: " + patientUuid + " could not be found.");
 				return new EmptySearchResult();
-
+			}
+			
 			List<Obs> patientObs = Context.getObsService().getObservationsByPerson(patient);
 
 			if (orderUuid != null) {
 				Order order = ((OrderResource1_8) Context.getService(RestService.class).getResourceBySupportedClass(
 						Order.class)).getByUniqueId(orderUuid);
 				if (order == null) {
+					log.warn("Order: " + orderUuid + " could not be found.");
 					return new EmptySearchResult();
 				} else {
 					List<Obs> orderObs = new ArrayList<Obs>();
@@ -70,11 +77,10 @@ public class ObservationByOrderSearchHandler implements SearchHandler {
 					return new NeedsPaging<Obs>(orderObs, context);
 				}
 			}
-
 			return new NeedsPaging<Obs>(patientObs, context);
 		}
-        return new EmptySearchResult();
-    }
+		return new EmptySearchResult();
+	}
 }
 
 
