@@ -22,8 +22,9 @@ angular.module('MedicationManagementUI.order',[])
 				scope.discontinueOrder = function() {
 
 					var dcOrder = scope.order.createDiscontinueOrder(orderContext);
-					var draftOrders = [];
-					draftOrders.push(dcOrder);
+					dcOrder.action = "DISCONTINUE";
+					var dcOrders = [];
+					dcOrders.push(dcOrder);
 
 					var encounterContext = {
 						patient: scope.config.patient,
@@ -33,7 +34,7 @@ angular.module('MedicationManagementUI.order',[])
 					};
 
 					scope.discontinue = {loading : "true"};
-					OrderEntryService.signAndSave({ draftOrders: draftOrders }, encounterContext)
+					OrderEntryService.signAndSave({ draftOrders: dcOrders }, encounterContext)
 					.$promise.then(function(result) {
 						location.href = location.href;
 					}, function(errorResponse) {
