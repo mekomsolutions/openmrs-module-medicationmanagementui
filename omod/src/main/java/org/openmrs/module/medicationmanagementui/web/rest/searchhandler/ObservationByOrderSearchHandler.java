@@ -25,7 +25,7 @@ import org.springframework.stereotype.Component;
 
 
 @Component
-public class ObservationSearchHandler implements SearchHandler {
+public class ObservationByOrderSearchHandler implements SearchHandler {
 
     private final SearchConfig searchConfig = new SearchConfig("byOrder", RestConstants.VERSION_1 + "/obs", Arrays.asList("1.8.*", "1.9.*", "1.10.*", "1.11.*", "1.12.*", "2.0.*"),
             Arrays.asList(new SearchQuery.Builder("Allows you to find Observations by patient and order").withRequiredParameters("patient", "order").build()));
