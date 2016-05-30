@@ -7,6 +7,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.api.ObsService;
+import org.openmrs.api.PersonService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.webservices.rest.SimpleObject;
 import org.openmrs.module.webservices.rest.web.response.ResourceDoesNotSupportOperationException;
@@ -18,12 +19,14 @@ public class ObservationByOrderSearchHandlerTest extends MainResourceControllerT
 
 	private String DATASET_PATH = "customTestDataset.xml";
 	
-	private ObsService service;
+	private ObsService obsService;
+	private PersonService personService;
 	private String PATIENT_UUID = "da7f524f-27ce-4bb2-86d6-6d1d05312bd5";
 	
 	@Before
 	public void init() throws Exception {
-		service = Context.getObsService();
+		obsService = Context.getObsService();
+		personService = Context.getPersonService();
 		executeDataSet(DATASET_PATH);
 	}
 
@@ -68,7 +71,8 @@ public class ObservationByOrderSearchHandlerTest extends MainResourceControllerT
 		SimpleObject result = deserialize(handle(req));
 		List<Object> hits = (List<Object>) result.get("results");
 
-		Assert.assertEquals(7, hits.size());
+		Assert.assertEquals(obsService.getObservationsByPerson(
+				personService.getPersonByUuid(PATIENT_UUID)).size(), hits.size());
 	}
 
 	/**
