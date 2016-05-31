@@ -8,10 +8,8 @@
 				<span ng-hide="order.isActive()" class="status inactive" style="background-color:#999999"></span>
 				<span style="font-weight: bold;">{{ order.drug.display }}: </span>
 				<span>{{ order | instructions }}</span>
-
-					<mmui-dispense-tag order="order" orderConfig="config" dispense-config="dispenseConfig"></mmui-dispense-tag>
-
-	
+				
+				<mmui-dispense-tag order="order" orderConfig="config" dispense-config="dispenseConfig"></mmui-dispense-tag>
 			</td>
 			<td ng-click="showDetails=!showDetails">
 				<span> {{order | dates }}</span>              

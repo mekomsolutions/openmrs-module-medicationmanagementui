@@ -1,6 +1,5 @@
 package org.openmrs.module.medicationmanagementui.page.controller;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,10 +7,12 @@ import java.util.Map;
 import org.openmrs.CareSetting;
 import org.openmrs.Concept;
 import org.openmrs.EncounterType;
+import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.Visit;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.EncounterService;
+import org.openmrs.api.ObsService;
 import org.openmrs.api.OrderService;
 import org.openmrs.api.VisitService;
 import org.openmrs.module.appui.UiSessionContext;
@@ -38,9 +39,9 @@ public class MedicationPageController {
 			UiUtils ui,
 			PageModel model) {
 
-
 		Map<String, Object> jsonConfig = new LinkedHashMap<String, Object>();
 
+		
 		if (visit != null) {
 			jsonConfig.put("visit", convertToFull(visit));
 		}
@@ -67,15 +68,15 @@ public class MedicationPageController {
 
 		Concept qtyDispenseConcept  = conceptService.getConceptByMapping(MedicationManagementUIConstants.QTY_DISPENSE_CONCEPT_MAPPING.split(":")[1], 
 				MedicationManagementUIConstants.QTY_DISPENSE_CONCEPT_MAPPING.split(":")[0]);
-		Concept qtyUnitsDispenseConcepts = conceptService.getConceptByMapping(MedicationManagementUIConstants.QTY_UNITS_DISPENSE_CONCEPT_MAPPING.split(":")[1], 
-				MedicationManagementUIConstants.QTY_UNITS_DISPENSE_CONCEPT_MAPPING.split(":")[0]);
+		Concept qtyUnitDispenseConcepts = conceptService.getConceptByMapping(MedicationManagementUIConstants.QTY_UNIT_DISPENSE_CONCEPT_MAPPING.split(":")[1], 
+				MedicationManagementUIConstants.QTY_UNIT_DISPENSE_CONCEPT_MAPPING.split(":")[0]);
 		Concept medicationDispenseConcepts = conceptService.getConceptByMapping(MedicationManagementUIConstants.MEDICATION_DISPENSE_CONCEPT_MAPPING.split(":")[1],
 				MedicationManagementUIConstants.MEDICATION_DISPENSE_CONCEPT_MAPPING.split(":")[0]);
 		Concept orderDispenseConcepts = conceptService.getConceptByMapping(MedicationManagementUIConstants.ORDER_DISPENSE_CONCEPT_MAPPING.split(":")[1],
 				MedicationManagementUIConstants.ORDER_DISPENSE_CONCEPT_MAPPING.split(":")[0]);
 
 		dispenseConfig.put("qtyDispenseConcept", convertToFull(qtyDispenseConcept));
-		dispenseConfig.put("qtyUnitsDispenseConcept", convertToFull(qtyUnitsDispenseConcepts));
+		dispenseConfig.put("qtyUnitDispenseConcept", convertToFull(qtyUnitDispenseConcepts));
 		dispenseConfig.put("medicationDispenseConcept", convertToFull(medicationDispenseConcepts));
 		dispenseConfig.put("orderDispenseConcept", convertToFull(orderDispenseConcepts));
 

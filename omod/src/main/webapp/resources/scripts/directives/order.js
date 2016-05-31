@@ -13,15 +13,18 @@ angular.module('MedicationManagementUI.order',[])
 
 			link: function(scope, element, attrs) {
 
-				var orderContext = {};
 				SessionInfo.get().$promise.then(function(info) {
-					orderContext.provider = info.currentProvider;
+					scope.config.provider = info.currentProvider;
+					scope.config.location = info.sessionLocation;
 				});
 
 
 				scope.discontinueOrder = function() {
 
-					var dcOrder = scope.order.createDiscontinueOrder(orderContext);
+					var dcOrder = scope.order.createDiscontinueOrder({
+						provider: scope.config.provider
+					});
+
 					dcOrder.action = "DISCONTINUE";
 					var dcOrders = [];
 					dcOrders.push(dcOrder);

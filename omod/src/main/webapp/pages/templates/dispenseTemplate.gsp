@@ -10,6 +10,7 @@ form input {
 
 <div style="text-align: right; margin-top: 5px">
 	<form name="dispenseForm">
+	{{previousObservations}}
 			Dispense quantity:
 			<input ng-model="quantity" type="number" min="0" placeholder="Quantity" required/>
 			<select-concept-from-list ng-model="quantityUnit" concepts="orderConfig.quantityUnits" placeholder="Units" size="8" required></select-concept-from-list>

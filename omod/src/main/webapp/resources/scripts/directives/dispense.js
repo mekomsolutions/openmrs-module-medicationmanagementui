@@ -1,14 +1,13 @@
-angular.module('MedicationManagementUI.dispense', [])
+angular.module('MedicationManagementUI.dispense', ['obsService'])
 
 .controller('MMUIDispenseConfigInitializer', ['$scope', '$window', function ($scope, $window) {
 
 	$scope.dispenseConfig = $window.dispenseConfig;
-
 }
 ])
 
-.directive('mmuiDispense', ['$rootScope', '$window', '$filter','SessionInfo', 'OrderEntryService', 'Encounter',
-	function($rootScope, $window, $filter, SessionInfo, OrderEntryService, Encounter) {
+.directive('mmuiDispense', ['$rootScope', '$window', '$filter','SessionInfo', 'OrderEntryService', 'Encounter', 'ObsService', 'Obs',
+	function($rootScope, $window, $filter, SessionInfo, OrderEntryService, Encounter, ObsService, Obs) {
 		return {
 			restrict: 'E',
 			scope: {
@@ -20,6 +19,14 @@ angular.module('MedicationManagementUI.dispense', [])
 
 			link: function(scope, element, attrs) {
 
+				/* Retrieve  previous observations */
+
+				var previousObservations = [];
+				var previousDispenseObservations = [];
+
+				var pastDrugObs = {};
+				var pastDoseObs = {};
+				var pastUnitObs = {};
 
 				function replaceWithUuids(obj, props) {
 					var replaced = angular.extend({}, obj);
@@ -38,58 +45,91 @@ angular.module('MedicationManagementUI.dispense', [])
 				scope.quantity = "";
 				scope.quantityUnit = "";
 
-				scope.orderConfig;
-				scope.dispenseConfig;
-
 				scope.createDispense = function () {
 
-					/* create encounter, or retrieve existing one */
-					var encounter = {};
+					var voidObs = ObsService.getObs({
+						v:'custom:(encounter:full,concept:ref,uuid:ref)',
+						patient: scope.order.patient.uuid,
+						order: scope.order.uuid,
+					})
 
-					if (scope.order.dispenseEncounter) {
-						encounter.uuid = scope.dispenseConfig.dispenseEncounter.uuid;
-						encounter.previousObs = scope.order.dispenseEncounter.obs;
-						encounter.location = uuidIfNotNull(scope.orderConfig.location);
-					} else {
-						encounter.encounterType = scope.dispenseConfig.dispenseEncounterType;
+					voidObs.then(function (results) {
+						previousObservations = results;
+
+						previousDispenseObservations = _.filter(previousObservations, function (obs) {
+							return obs.encounter.encounterType.uuid == dispenseConfig.dispenseEncounterType.uuid;
+						})
+
+						pastDrugObs = _.find(previousDispenseObservations, function (obs) {
+							return obs.concept.uuid == dispenseConfig.medicationDispenseConcept.uuid
+						});
+
+						pastDoseObs = _.find(previousDispenseObservations, function (obs) {
+							return obs.concept.uuid == dispenseConfig.qtyDispenseConcept.uuid
+						});
+
+						pastUnitObs = _.find(previousDispenseObservations, function (obs) {
+							return obs.concept.uuid == dispenseConfig.qtyUnitDispenseConcept.uuid
+						});
+
+						_.map(previousDispenseObservations, function (obs) {
+							Obs.delete({
+								uuid: obs.uuid
+							});
+						});
+						
+					});
+					
+					voidObs.then(function () {
+						/* create encounter, or retrieve existing one */
+						var encounter = {};
+
+						if (pastDrugObs) {
+							encounter.uuid = uuidIfNotNull(pastDrugObs.encounter);
+						}
+						encounter.encounterType = scope.dispenseConfig.dispenseEncounterType.uuid;
 						encounter.patient = scope.orderConfig.patient.uuid;
 						encounter.visit = uuidIfNotNull(scope.orderConfig.visit);
 						encounter.location = uuidIfNotNull(scope.orderConfig.location);
-					}
+						encounter.provider = scope.orderConfig.provider.person;
 
-					/* create dispense observation */
-					encounter.obs = []
+						/* create dispense observation */
+						encounter.obs = []
 
-					var drugObs = {
-						order: scope.order.uuid,
-						concept: scope.dispenseConfig.medicationDispenseConcept.uuid,
-						value: scope.order.concept.uuid
-					}
-					var doseObs = {
-						order: scope.order.uuid,
-						concept: scope.dispenseConfig.qtyDispenseConcept.uuid,
-						value: scope.quantity
-					}
-					var unitObs = {
-						order: scope.order.uuid,
-						concept: scope.dispenseConfig.qtyUnitsDispenseConcept.uuid,
-						value: scope.quantityUnit.uuid
-					}
+						var drugObs = {
+							order: scope.order.uuid,
+							concept: scope.dispenseConfig.medicationDispenseConcept.uuid,
+							value: scope.order.concept.uuid
+						}
+						var doseObs = {
+							order: scope.order.uuid,
+							concept: scope.dispenseConfig.qtyDispenseConcept.uuid,
+							value: scope.quantity
+						}
+						var unitObs = {
+							order: scope.order.uuid,
+							concept: scope.dispenseConfig.qtyUnitDispenseConcept.uuid,
+							value: scope.quantityUnit.uuid
+						}
 
-					encounter.obs.push(drugObs,doseObs,unitObs);
+						var currentDispenseObservations = [];
+						currentDispenseObservations.push(drugObs, doseObs, unitObs);
 
-					Encounter.save(encounter).$promise.then(function (results) {
-						/* broadcast a reload event */
-						$rootScope.$broadcast('relaodOrders');
-					});
+						encounter.obs.push(drugObs,doseObs,unitObs);
+
+						Encounter.save(encounter).$promise.then(function (results) {
+							/* broadcast a reload event */
+							$rootScope.$broadcast('reloadOrders');
+						});
+					})
 				}
 			}
 		}
 	}
 	])
 
-.directive('mmuiDispenseTag', ['EncounterService', 'ObsService',
-	function(EncounterService, ObsService) {
+.directive('mmuiDispenseTag', ['ObsService',
+	function(ObsService) {
 		return {
 			restrict: 'E',
 			scope: {
@@ -101,13 +141,14 @@ angular.module('MedicationManagementUI.dispense', [])
 
 			link: function(scope, element, attrs) {
 
+				var orderObservations = [];
+
 				ObsService.getObs({
 					v:'custom:(order:ref,value:ref,concept:ref)',
 					patient: scope.order.patient.uuid,
 					order: scope.order.uuid
 				}).then(function (results) {
-					var orderObservations = results;
-
+					orderObservations = results;
 
 					scope.dispenseObservations = orderObservations;
 
@@ -116,7 +157,7 @@ angular.module('MedicationManagementUI.dispense', [])
 					});
 
 					scope.qtyUnitsDispenseObs = _.find(orderObservations, function (obs) {
-						return obs.concept.uuid == dispenseConfig.qtyUnitsDispenseConcept.uuid
+						return obs.concept.uuid == dispenseConfig.qtyUnitDispenseConcept.uuid
 					});
 
 

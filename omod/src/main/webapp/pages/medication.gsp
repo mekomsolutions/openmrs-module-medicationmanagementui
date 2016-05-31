@@ -67,7 +67,7 @@ ui.includeCss("medicationmanagementui", "medication.css")
 				<div style="clear: both;"></div>
 				<div style="margin-top: 15px;margin-left:2px;font-weight: bold">
 					<% if (context.hasPrivilege("App: orderentryui.drugOrders")) { %>
-					<a ng-href="{{config.createOrderUrl}}">
+					<a ng-href="{{config.addOrderUrl}}">
 						Add
 						<i class="icon-plus-sign"></i>
 					</a>

@@ -8,15 +8,18 @@ angular.module('MedicationManagementUI.main', ['orderService', 'encounterService
 	_.findWhere(config.careSettings, { uuid: config.intialCareSetting }) :
 	$scope.config.careSettings[0];
 
-	$scope.buildCreateOrderUrl = function() {		
-		$scope.config.createOrderUrl = $scope.config.orderEntryUiUrl + "&mode=new" + "&skipDispense=true" + "&careSetting=" + $scope.careSetting.uuid;
+	$scope.buildAddOrderUrl = function() {		
+		$scope.config.addOrderUrl = $scope.config.orderEntryUiUrl + "&mode=new" + "&skipDispense=true" + "&careSetting=" + $scope.careSetting.uuid
+		if ($scope.config.visit) {
+			$scope.config.addOrderUrl = $scope.config.addOrderUrl.concat('&visit=' + $scope.config.visit.uuid);
+		}
 	}
-	$scope.buildCreateOrderUrl();
+	$scope.buildAddOrderUrl();
 
 	$scope.setCareSetting = function(careSetting) {
 		/* TODO confirm dialog or undo functionality if this is going to discard things */
 		$scope.careSetting = careSetting;
-		$scope.buildCreateOrderUrl();
+		$scope.buildAddOrderUrl();
 	}
 
 }])
@@ -84,7 +87,7 @@ angular.module('MedicationManagementUI.main', ['orderService', 'encounterService
 
 		$scope.loadData();
 
-		$rootScope.$on('relaodOrders', function () {
+		$rootScope.$on('reloadOrders', function () {
 			$scope.loadData();
 		})
 
@@ -120,7 +123,7 @@ angular.module('MedicationManagementUI.main', ['orderService', 'encounterService
 		}
 
 		function setReviseUrl (order) {
-			order.reviseUrl = $scope.config.orderEntryUiUrl + "&order=" + order.uuid + "&mode=revise"  + "&skipDispense=true";
+			order.reviseUrl = $scope.config.orderEntryUiUrl + "&order=" + order.uuid + "&visit=" + $scope.config.visit.uuid + "&mode=revise"  + "&skipDispense=true";
 			return order;
 		}
 
