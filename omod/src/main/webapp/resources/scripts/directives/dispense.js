@@ -1,4 +1,4 @@
-angular.module('MedicationManagementUI.dispense', ['obsService'])
+angular.module('MedicationManagementUI.dispense', ['obsService', 'encounterService'])
 
 .controller('MMUIDispenseConfigInitializer', ['$scope', '$window', function ($scope, $window) {
 
@@ -6,8 +6,8 @@ angular.module('MedicationManagementUI.dispense', ['obsService'])
 }
 ])
 
-.directive('mmuiDispense', ['$rootScope', '$window', '$filter','SessionInfo', 'OrderEntryService', 'Encounter', 'ObsService', 'Obs',
-	function($rootScope, $window, $filter, SessionInfo, OrderEntryService, Encounter, ObsService, Obs) {
+.directive('mmuiDispense', ['$rootScope', '$timeout', 'Encounter', 'ObsService', 'Obs',
+	function($rootScope, $timeout, Encounter, ObsService, Obs) {
 		return {
 			restrict: 'E',
 			scope: {
@@ -19,7 +19,12 @@ angular.module('MedicationManagementUI.dispense', ['obsService'])
 
 			link: function(scope, element, attrs) {
 
-				/* Retrieve  previous observations */
+				scope.$on("toggleDispense", function () {
+					scope.quantity = "";
+					scope.quantityUnit = "";
+
+					scope.showDirective = !scope.showDirective;
+				});
 
 				var previousObservations = [];
 				var previousDispenseObservations = [];
@@ -27,6 +32,8 @@ angular.module('MedicationManagementUI.dispense', ['obsService'])
 				var pastDrugObs = {};
 				var pastDoseObs = {};
 				var pastUnitObs = {};
+
+				scope.loading = false;
 
 				function replaceWithUuids(obj, props) {
 					var replaced = angular.extend({}, obj);
@@ -42,10 +49,10 @@ angular.module('MedicationManagementUI.dispense', ['obsService'])
 					return obj ? obj.uuid : null;
 				}
 
-				scope.quantity = "";
-				scope.quantityUnit = "";
-
 				scope.createDispense = function () {
+
+					/* Disable save button once clicked */
+					scope.loading = true;
 
 					var voidObs = ObsService.getObs({
 						v:'custom:(encounter:full,concept:ref,uuid:ref)',
@@ -72,15 +79,6 @@ angular.module('MedicationManagementUI.dispense', ['obsService'])
 							return obs.concept.uuid == dispenseConfig.qtyUnitDispenseConcept.uuid
 						});
 
-						_.map(previousDispenseObservations, function (obs) {
-							Obs.delete({
-								uuid: obs.uuid
-							});
-						});
-						
-					});
-					
-					voidObs.then(function () {
 						/* create encounter, or retrieve existing one */
 						var encounter = {};
 
@@ -118,9 +116,22 @@ angular.module('MedicationManagementUI.dispense', ['obsService'])
 						encounter.obs.push(drugObs,doseObs,unitObs);
 
 						Encounter.save(encounter).$promise.then(function (results) {
-							/* broadcast a reload event */
-							$rootScope.$broadcast('reloadOrders');
+
+							/* if it is successfully saved, then delete previous observations */
+							_.map(previousDispenseObservations, function (obs) {
+								Obs.delete({
+									uuid: obs.uuid
+								});
+							});
+
+							/* broadcast a events */
+							$rootScope.$broadcast('dispensed');
+							scope.$broadcast('toggleDispense');
+
+							scope.loading = false;
+
 						});
+
 					})
 				}
 			}
@@ -128,8 +139,8 @@ angular.module('MedicationManagementUI.dispense', ['obsService'])
 	}
 	])
 
-.directive('mmuiDispenseTag', ['ObsService',
-	function(ObsService) {
+.directive('mmuiDispenseTag', ['$rootScope', 'ObsService',
+	function($rootScope, ObsService) {
 		return {
 			restrict: 'E',
 			scope: {
@@ -141,27 +152,35 @@ angular.module('MedicationManagementUI.dispense', ['obsService'])
 
 			link: function(scope, element, attrs) {
 
-				var orderObservations = [];
+				scope.loadDispenseData = function () {
 
-				ObsService.getObs({
-					v:'custom:(order:ref,value:ref,concept:ref)',
-					patient: scope.order.patient.uuid,
-					order: scope.order.uuid
-				}).then(function (results) {
-					orderObservations = results;
+					var orderObservations = [];
 
-					scope.dispenseObservations = orderObservations;
+					ObsService.getObs({
+						v:'custom:(order:ref,value:ref,concept:ref)',
+						patient: scope.order.patient.uuid,
+						order: scope.order.uuid
+					}).then(function (results) {
+						orderObservations = results;
 
-					scope.qtyDispenseObs = _.find(orderObservations, function (obs) {
-						return obs.concept.uuid == dispenseConfig.qtyDispenseConcept.uuid
-					});
+						scope.dispenseObservations = orderObservations;
 
-					scope.qtyUnitsDispenseObs = _.find(orderObservations, function (obs) {
-						return obs.concept.uuid == dispenseConfig.qtyUnitDispenseConcept.uuid
-					});
+						scope.qtyDispenseObs = _.find(orderObservations, function (obs) {
+							return obs.concept.uuid == dispenseConfig.qtyDispenseConcept.uuid
+						});
 
+						scope.qtyUnitsDispenseObs = _.find(orderObservations, function (obs) {
+							return obs.concept.uuid == dispenseConfig.qtyUnitDispenseConcept.uuid
+						});
+					})
+				}
 
+				scope.loadDispenseData();
+
+				$rootScope.$on('dispensed', function () {
+					scope.loadDispenseData();
 				})
+
 			}
 		}
 	}

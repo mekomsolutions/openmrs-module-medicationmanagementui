@@ -21,7 +21,7 @@
 						<i class="icon-pencil"></i>
 					</a>
 
-					<a ng-click="toDispense=!toDispense" title="Dispense" style="" >
+					<a ng-click="showDispense()" title="Dispense" style="" >
 						<i class="icon-external-link"></i>
 					</a>
 
@@ -65,7 +65,7 @@
 	</div>
 
 	<span ng-if="config.quantityUnits">
-		<mmui-dispense order="order" order-config="config" dispense-config="dispenseConfig" ng-show="toDispense"></mmui-dispense>
+		<mmui-dispense order="order" order-config="config" dispense-config="dispenseConfig"></mmui-dispense>
 	</span>
 
 

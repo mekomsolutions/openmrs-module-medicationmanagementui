@@ -1,7 +1,7 @@
 angular.module('MedicationManagementUI.order',[])
 
-.directive('mmuiOrder', [ '$window', '$filter','SessionInfo', 'OrderEntryService',
-	function($window, $filter,SessionInfo,OrderEntryService) {
+.directive('mmuiOrder', [ '$rootScope', '$window', '$filter','SessionInfo', 'OrderEntryService',
+	function($rootScope, $window, $filter,SessionInfo,OrderEntryService) {
 		return {
 			restrict: 'E',
 			scope: {
@@ -18,6 +18,9 @@ angular.module('MedicationManagementUI.order',[])
 					scope.config.location = info.sessionLocation;
 				});
 
+				scope.showDispense = function () {
+					scope.$broadcast("toggleDispense");
+				}
 
 				scope.discontinueOrder = function() {
 
