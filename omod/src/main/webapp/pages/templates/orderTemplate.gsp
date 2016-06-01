@@ -53,6 +53,7 @@
 						<tr ng-repeat="revision in order.revisions">
 							<td>
 								{{revision.action }}: {{revision | instructions }}
+								<mmui-dispense-tag order="revision" orderConfig="config" dispense-config="dispenseConfig"></mmui-dispense-tag>
 							</td>  
 							<td>
 								{{revision | dates }}

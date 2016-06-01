@@ -180,7 +180,6 @@ angular.module('MedicationManagementUI.dispense', ['obsService', 'encounterServi
 				$rootScope.$on('dispensed', function () {
 					scope.loadDispenseData();
 				})
-
 			}
 		}
 	}
