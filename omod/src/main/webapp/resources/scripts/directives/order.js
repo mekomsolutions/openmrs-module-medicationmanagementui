@@ -1,7 +1,7 @@
 angular.module('MedicationManagementUI.order',[])
 
-.directive('mmuiOrder', [ '$rootScope', '$window', '$filter','SessionInfo', 'OrderEntryService',
-	function($rootScope, $window, $filter,SessionInfo,OrderEntryService) {
+.directive('mmuiOrder', [ '$rootScope','SessionInfo', 'OrderEntryService',
+	function($rootScope, SessionInfo,OrderEntryService) {
 		return {
 			restrict: 'E',
 			scope: {
