@@ -17,7 +17,7 @@
 	<dependencies>
 
 		<!-- Add other dependencies from parent's pom: <dependency> <groupId>org.other.library</groupId> 
-			<artifactId>library-name</artifactId> </dependency> -->
+		<artifactId>library-name</artifactId> </dependency> -->
 
 		<!-- Begin OpenMRS modules -->
 
@@ -141,7 +141,7 @@
 					</configuration>
 				</plugin>
 				<!--This plugin's configuration is used to store Eclipse m2e settings 
-					only. It has no influence on the Maven build itself. -->
+				only. It has no influence on the Maven build itself. -->
 				<plugin>
 					<groupId>org.eclipse.m2e</groupId>
 					<artifactId>lifecycle-mapping</artifactId>
@@ -254,7 +254,7 @@
 				<execution> <goals> <goal>exec</goal> </goals> <phase>generate-resources</phase> 
 				</execution> </executions> <configuration> <jrubyVersion>1.7.10</jrubyVersion> 
 				<execArgs>${project.build.directory}/rubygems/bin/compass compile ${basedir}/src/main/compass</execArgs> 
-				</configuration> </plugin> -->
+			</configuration> </plugin> -->
 
 
 			<plugin>
@@ -281,27 +281,27 @@
 						<goals>
 							<goal>test</goal>
 						</goals>
-						<configuration>
-							<jsSrcDir>${project.basedir}/src/main/webapp/resources/scripts</jsSrcDir>
-							<jsTestSrcDir>${project.basedir}/src/test/webapp/resources/scripts</jsTestSrcDir>
-							<preloadSources>
-								<preloadSource>//ajax.googleapis.com/ajax/libs/angularjs/1.3.0/angular.js</preloadSource>
-								<preloadSource>//ajax.googleapis.com/ajax/libs/angularjs/1.3.0/angular-resource.js</preloadSource>
-								<preloadSource>//ajax.googleapis.com/ajax/libs/angularjs/1.3.0/angular-mocks.js</preloadSource>
-								<preloadSource>${project.basedir}/src/test/webapp/provided/scripts/jquery-1.10.2.js</preloadSource>
-								<preloadSource>${project.basedir}/src/test/webapp/provided/scripts/underscore-min.js</preloadSource>
-								<preloadSource>${project.basedir}/src/test/webapp/provided/scripts/knockout-2.1.0.js</preloadSource>
-							</preloadSources>
-							<webDriverClassName>org.openqa.selenium.phantomjs.PhantomJSDriver</webDriverClassName>
-							<webDriverCapabilities>
-								<capability>
-									<name>phantomjs.binary.path</name>
-									<value>${phantomjs.binary}</value>
-								</capability>
-							</webDriverCapabilities>
-						</configuration>
 					</execution>
 				</executions>
+				<configuration>
+					<jsSrcDir>${project.basedir}/src/main/webapp/resources/scripts</jsSrcDir>
+					<jsTestSrcDir>${project.basedir}/src/test/webapp/resources/scripts</jsTestSrcDir>
+					<preloadSources>
+						<preloadSource>//ajax.googleapis.com/ajax/libs/angularjs/1.3.0/angular.js</preloadSource>
+						<preloadSource>//ajax.googleapis.com/ajax/libs/angularjs/1.3.0/angular-resource.js</preloadSource>
+						<preloadSource>//ajax.googleapis.com/ajax/libs/angularjs/1.3.0/angular-mocks.js</preloadSource>
+						<preloadSource>${project.basedir}/src/test/webapp/provided/scripts/jquery-1.10.2.js</preloadSource>
+						<preloadSource>${project.basedir}/src/test/webapp/provided/scripts/underscore-min.js</preloadSource>
+						<preloadSource>${project.basedir}/src/test/webapp/provided/scripts/knockout-2.1.0.js</preloadSource>
+					</preloadSources>
+					<webDriverClassName>org.openqa.selenium.phantomjs.PhantomJSDriver</webDriverClassName>
+					<webDriverCapabilities>
+						<capability>
+							<name>phantomjs.binary.path</name>
+							<value>${phantomjs.binary}</value>
+						</capability>
+					</webDriverCapabilities>
+				</configuration>
 			</plugin>
 
 
@@ -329,11 +329,11 @@
 							<jrubyVersion>1.7.10</jrubyVersion>
 							<execArgs>${project.build.directory}/rubygems/bin/compass watch
 								${basedir}/src/main/compass</execArgs>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
+							</configuration>
+						</plugin>
+					</plugins>
+				</build>
+			</profile>
+		</profiles>
 
-</project>
+	</project>
