@@ -1,4 +1,4 @@
-describe("Medication Management UI", function() {
+	describe("Medication Management UI", function() {
 
 	beforeEach(function() {
 		// creating fake dependencies to instanciate our module
@@ -115,6 +115,9 @@ describe("Medication Management UI", function() {
 					},
 					visit: ""
 				}
+
+				spyOn($scope, '$on').and.callThrough();
+
 				
 				createController = function() {
 					$controller('MMUIOrderListCtrl', {
@@ -132,7 +135,7 @@ describe("Medication Management UI", function() {
 		});
 
 
-		it('expect all drug orders to be returned', function() {
+		it('should return all drug orders', function() {
 
 			createController();
 
@@ -142,7 +145,7 @@ describe("Medication Management UI", function() {
 		});
 
 
-		it("expect all drug orders to have the encounter's visit uuid (when provided)", function() {
+		it("should retrieve encounter's visit uuid (when provided)", function() {
 
 			createController();
 
@@ -152,7 +155,7 @@ describe("Medication Management UI", function() {
 
 		});
 
-		it("expect drug orders to have revisions", function() {
+		it("should retrieve revisions", function() {
 
 			createController();
 
@@ -160,6 +163,14 @@ describe("Medication Management UI", function() {
 			expect($scope.allDrugOrders[0].revisions[1].uuid).toBe("DDD");
 
 		});
+
+		it("should handle the 'reloadOrders' event", function () {
+			
+			createController();
+			$scope.$broadcast("reloadOrders");
+
+			expect($scope.$on).toHaveBeenCalled();
+		})
 
 	});
 

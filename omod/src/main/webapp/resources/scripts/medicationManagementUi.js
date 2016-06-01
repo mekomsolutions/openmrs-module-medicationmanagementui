@@ -91,6 +91,7 @@ angular.module('MedicationManagementUI.main', ['orderService', 'encounterService
 			$scope.loadData();
 		})
 
+
 		function getRevisions(orders) {
 
 			var ordersMap = {};
