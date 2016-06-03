@@ -2,13 +2,12 @@ package org.openmrs.module.medicationmanagementui.web.rest.searchhandler;
 
 import java.util.List;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.api.ObsService;
 import org.openmrs.api.PersonService;
-import org.openmrs.api.context.Context;
+import org.openmrs.module.medicationmanagementui.MedicationManagementUIContext;
 import org.openmrs.module.webservices.rest.SimpleObject;
 import org.openmrs.module.webservices.rest.web.response.ResourceDoesNotSupportOperationException;
 import org.openmrs.module.webservices.rest.web.v1_0.controller.MainResourceControllerTest;
@@ -21,12 +20,13 @@ public class ObservationByOrderSearchHandlerTest extends MainResourceControllerT
 	
 	private ObsService obsService;
 	private PersonService personService;
+	private MedicationManagementUIContext context;
 	private String PATIENT_UUID = "da7f524f-27ce-4bb2-86d6-6d1d05312bd5";
 	
 	@Before
 	public void init() throws Exception {
-		obsService = Context.getObsService();
-		personService = Context.getPersonService();
+		obsService = context.getObsService();
+		personService = context.getPersonService();
 		executeDataSet(DATASET_PATH);
 	}
 

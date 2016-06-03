@@ -10,8 +10,8 @@ angular.module('MedicationManagementUI.main', ['orderService', 'encounterService
 
 	$scope.buildAddOrderUrl = function() {		
 		$scope.config.addOrderUrl = $scope.config.orderEntryUiUrl + "&mode=new" + "&skipDispense=true" + "&careSetting=" + $scope.careSetting.uuid
-		if ($scope.config.visit) {
-			$scope.config.addOrderUrl = $scope.config.addOrderUrl.concat('&visit=' + $scope.config.visit.uuid);
+		if ($scope.config.activeVisit) {
+			$scope.config.addOrderUrl = $scope.config.addOrderUrl.concat('&visit=' + $scope.config.activeVisit.uuid);
 		}
 	}
 	$scope.buildAddOrderUrl();

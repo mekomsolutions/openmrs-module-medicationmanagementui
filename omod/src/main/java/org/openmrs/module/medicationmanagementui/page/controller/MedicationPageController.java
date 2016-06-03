@@ -7,20 +7,23 @@ import java.util.Map;
 import org.openmrs.CareSetting;
 import org.openmrs.Concept;
 import org.openmrs.EncounterType;
-import org.openmrs.Obs;
+import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.Visit;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.EncounterService;
-import org.openmrs.api.ObsService;
 import org.openmrs.api.OrderService;
 import org.openmrs.api.VisitService;
 import org.openmrs.module.appui.UiSessionContext;
+import org.openmrs.module.emrapi.adt.AdtService;
+import org.openmrs.module.emrapi.patient.PatientDomainWrapper;
+import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
 import org.openmrs.module.medicationmanagementui.MedicationManagementUIConstants;
 import org.openmrs.module.webservices.rest.web.ConversionUtil;
 import org.openmrs.module.webservices.rest.web.representation.Representation;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
+import org.openmrs.ui.framework.annotation.InjectBeans;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -29,21 +32,27 @@ public class MedicationPageController {
 
 
 	public void controller(@RequestParam("patient") Patient patient,
-			@RequestParam(value="visit", required=false) Visit visit,
 			@RequestParam(value = "careSetting", required = false) CareSetting careSetting,
 			@SpringBean("orderService") OrderService orderService,
 			@SpringBean("visitService") VisitService visitService,
 			@SpringBean("encounterService") EncounterService encounterService,
 			@SpringBean("conceptService") ConceptService conceptService,
+			@SpringBean("adtService") AdtService adtService,
+
+			@InjectBeans PatientDomainWrapper wrapper,
+
 			UiSessionContext sessionContext,
 			UiUtils ui,
 			PageModel model) {
 
 		Map<String, Object> jsonConfig = new LinkedHashMap<String, Object>();
 
-		
-		if (visit != null) {
-			jsonConfig.put("visit", convertToFull(visit));
+		try {
+			Location visitLocation = adtService.getLocationThatSupportsVisits(sessionContext.getSessionLocation());
+			VisitDomainWrapper activeVisit = adtService.getActiveVisit(wrapper.getPatient(), visitLocation);
+			jsonConfig.put("activeVisit", activeVisit);
+		}  catch (IllegalArgumentException ex) {
+			// location does not support visits
 		}
 
 		if (careSetting != null) {
