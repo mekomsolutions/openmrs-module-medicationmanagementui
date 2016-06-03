@@ -17,14 +17,27 @@
 	<dependencies>
 
 		<!-- Add other dependencies from parent's pom: <dependency> <groupId>org.other.library</groupId> 
-		<artifactId>library-name</artifactId> </dependency> -->
-
-		<!-- Begin OpenMRS modules -->
+			<artifactId>library-name</artifactId> </dependency> -->
 
 		<dependency>
 			<groupId>${project.parent.groupId}</groupId>
 			<artifactId>${project.parent.artifactId}-api</artifactId>
 			<version>${project.parent.version}</version>
+		</dependency>
+
+
+		<!-- Begin OpenMRS modules -->
+
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>emrapi-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>providermanagement-api</artifactId>
+			<scope>test</scope>
 		</dependency>
 
 		<dependency>
@@ -48,6 +61,33 @@
 			<type>test-jar</type>
 		</dependency>
 
+				<!-- Failed to load ApplicationContext -->
+
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>reporting-api</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>calculation-api</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>serialization.xstream-api</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>webservices.rest-omod</artifactId>
+			<version>2.15-SNAPSHOT</version>
+			<classifier>tests</classifier>
+			<scope>test</scope>
+		</dependency>
 
 
 		<!-- End OpenMRS modules -->
@@ -141,7 +181,7 @@
 					</configuration>
 				</plugin>
 				<!--This plugin's configuration is used to store Eclipse m2e settings 
-				only. It has no influence on the Maven build itself. -->
+					only. It has no influence on the Maven build itself. -->
 				<plugin>
 					<groupId>org.eclipse.m2e</groupId>
 					<artifactId>lifecycle-mapping</artifactId>
@@ -254,7 +294,7 @@
 				<execution> <goals> <goal>exec</goal> </goals> <phase>generate-resources</phase> 
 				</execution> </executions> <configuration> <jrubyVersion>1.7.10</jrubyVersion> 
 				<execArgs>${project.build.directory}/rubygems/bin/compass compile ${basedir}/src/main/compass</execArgs> 
-			</configuration> </plugin> -->
+				</configuration> </plugin> -->
 
 
 			<plugin>
@@ -329,11 +369,11 @@
 							<jrubyVersion>1.7.10</jrubyVersion>
 							<execArgs>${project.build.directory}/rubygems/bin/compass watch
 								${basedir}/src/main/compass</execArgs>
-							</configuration>
-						</plugin>
-					</plugins>
-				</build>
-			</profile>
-		</profiles>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 
-	</project>
+</project>
