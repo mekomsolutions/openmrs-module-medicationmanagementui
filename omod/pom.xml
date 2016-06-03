@@ -36,6 +36,18 @@
 
 		<dependency>
 			<groupId>org.openmrs.module</groupId>
+			<artifactId>emrapi-api-1.11</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>providermanagement-api</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
 			<artifactId>appui-omod</artifactId>
 		</dependency>
 
@@ -55,6 +67,31 @@
 			<type>test-jar</type>
 		</dependency>
 
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>reporting-api</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>calculation-api</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>serialization.xstream-api</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>webservices.rest-omod</artifactId>
+			<version>2.14</version>
+			<classifier>tests</classifier>
+			<scope>test</scope>
+		</dependency>
 
 
 		<!-- End OpenMRS modules -->
@@ -256,12 +293,28 @@
 					</execution>
 				</executions>
 			</plugin>
-			<!-- Disabling gem-maven-plugin <plugin> <groupId>de.saumya.mojo</groupId> 
-				<artifactId>gem-maven-plugin</artifactId> <extensions>true</extensions> <executions> 
-				<execution> <goals> <goal>exec</goal> </goals> <phase>generate-resources</phase> 
-				</execution> </executions> <configuration> <jrubyVersion>1.7.10</jrubyVersion> 
-				<execArgs>${project.build.directory}/rubygems/bin/compass compile ${basedir}/src/main/compass</execArgs> 
-				</configuration> </plugin> -->
+			
+			<!-- Disabling gem-maven-plugin -->
+			<!--
+			<plugin>
+				<groupId>de.saumya.mojo</groupId>
+				<artifactId>gem-maven-plugin</artifactId>
+				<extensions>true</extensions>
+				<executions>
+					<execution>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<phase>generate-resources</phase>
+					</execution>
+				</executions>
+				<configuration>
+					<jrubyVersion>1.7.10</jrubyVersion>
+					<execArgs>${project.build.directory}/rubygems/bin/compass compile
+						${basedir}/src/main/compass</execArgs>
+				</configuration>
+			</plugin>
+			-->
 
 
 			<plugin>

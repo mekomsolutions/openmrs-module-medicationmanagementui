@@ -11,6 +11,7 @@ import org.openmrs.module.medicationmanagementui.MedicationManagementUIContext;
 import org.openmrs.module.webservices.rest.SimpleObject;
 import org.openmrs.module.webservices.rest.web.response.ResourceDoesNotSupportOperationException;
 import org.openmrs.module.webservices.rest.web.v1_0.controller.MainResourceControllerTest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -20,8 +21,11 @@ public class ObservationByOrderSearchHandlerTest extends MainResourceControllerT
 	
 	private ObsService obsService;
 	private PersonService personService;
-	private MedicationManagementUIContext context;
+	
 	private String PATIENT_UUID = "da7f524f-27ce-4bb2-86d6-6d1d05312bd5";
+	
+	@Autowired
+	protected MedicationManagementUIContext context;
 	
 	@Before
 	public void init() throws Exception {
