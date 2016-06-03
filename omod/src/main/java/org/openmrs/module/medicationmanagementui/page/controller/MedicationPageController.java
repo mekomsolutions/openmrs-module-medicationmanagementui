@@ -39,39 +39,34 @@ public class MedicationPageController {
 			@SpringBean("conceptService") ConceptService conceptService,
 			@SpringBean("adtService") AdtService adtService,
 
-			@InjectBeans PatientDomainWrapper wrapper,
-
 			UiSessionContext sessionContext,
 			UiUtils ui,
 			PageModel model) {
 
-		Map<String, Object> jsonConfig = new LinkedHashMap<String, Object>();
+		Map<String, Object> orderConfig = new LinkedHashMap<String, Object>();
 
-		try {
-			Location visitLocation = adtService.getLocationThatSupportsVisits(sessionContext.getSessionLocation());
-			VisitDomainWrapper activeVisit = adtService.getActiveVisit(wrapper.getPatient(), visitLocation);
-			jsonConfig.put("activeVisit", activeVisit);
-		}  catch (IllegalArgumentException ex) {
-			// location does not support visits
-		}
+		// retrieve the active visit
+		Location visitLocation = adtService.getLocationThatSupportsVisits(sessionContext.getSessionLocation());
+		VisitDomainWrapper visitWrapper = adtService.getActiveVisit(patient, visitLocation);
+		orderConfig.put("activeVisit", visitWrapper == null ? null : convertToRef(visitWrapper.getVisit()));
 
 		if (careSetting != null) {
-			jsonConfig.put("intialCareSetting", careSetting.getUuid());
+			orderConfig.put("intialCareSetting", careSetting.getUuid());
 		}
 
 		List<CareSetting> careSettings = orderService.getCareSettings(false);
-		jsonConfig.put("careSettings", convertToFull(careSettings));
+		orderConfig.put("careSettings", convertToFull(careSettings));
 
-		jsonConfig.put("patient", convertToFull(patient));
+		orderConfig.put("patient", convertToFull(patient));
 
 		EncounterType orderEncounterType = encounterService.getEncounterTypeByUuid(MedicationManagementUIConstants.ORDER_ENCOUNTER_TYPE_UUID);
-		jsonConfig.put("drugOrderEncounterType", convertToFull(orderEncounterType));
+		orderConfig.put("drugOrderEncounterType", convertToRef(orderEncounterType));
 
 		String orderEntryUiUrl = ui.pageLink("orderentryui", "drugOrders", SimpleObject.create("patientId", patient.getId(), "patient", patient.getId(),  "returnUrl", ui.thisUrl()));
-		jsonConfig.put("orderEntryUiUrl", orderEntryUiUrl);
+		orderConfig.put("orderEntryUiUrl", orderEntryUiUrl);
 
 		List<Concept> dispensingUnits = orderService.getDrugDispensingUnits();
-		jsonConfig.put("quantityUnits", convertToFull(dispensingUnits));
+		orderConfig.put("quantityUnits", convertToFull(dispensingUnits));
 
 		Map<String, Object> dispenseConfig = new LinkedHashMap<String, Object>();
 
@@ -84,10 +79,10 @@ public class MedicationPageController {
 		Concept orderDispenseConcepts = conceptService.getConceptByMapping(MedicationManagementUIConstants.ORDER_DISPENSE_CONCEPT_MAPPING.split(":")[1],
 				MedicationManagementUIConstants.ORDER_DISPENSE_CONCEPT_MAPPING.split(":")[0]);
 
-		dispenseConfig.put("qtyDispenseConcept", convertToFull(qtyDispenseConcept));
-		dispenseConfig.put("qtyUnitDispenseConcept", convertToFull(qtyUnitDispenseConcepts));
-		dispenseConfig.put("medicationDispenseConcept", convertToFull(medicationDispenseConcepts));
-		dispenseConfig.put("orderDispenseConcept", convertToFull(orderDispenseConcepts));
+		dispenseConfig.put("qtyDispenseConcept", convertToRef(qtyDispenseConcept));
+		dispenseConfig.put("qtyUnitDispenseConcept", convertToRef(qtyUnitDispenseConcepts));
+		dispenseConfig.put("medicationDispenseConcept", convertToRef(medicationDispenseConcepts));
+		dispenseConfig.put("orderDispenseConcept", convertToRef(orderDispenseConcepts));
 
 		EncounterType dispenseEncounterType = encounterService.getEncounterTypeByUuid(MedicationManagementUIConstants.DISPENSE_ENCOUNTER_TYPE_UUID);
 		dispenseConfig.put("dispenseEncounterType", convertToFull(dispenseEncounterType));
@@ -95,16 +90,17 @@ public class MedicationPageController {
 		String medicationDispenseUrl = ui.pageLink("medicationdispense", "dispense", SimpleObject.create("patient", patient.getId(),  "returnUrl", ui.thisUrl()));
 		dispenseConfig.put("medicationDispenseUrl", medicationDispenseUrl);
 
-
 		model.put("patient", patient);
-		model.put("jsonConfig", ui.toJson(jsonConfig));
+		model.put("orderConfig", ui.toJson(orderConfig));
 		model.put("dispenseConfig", ui.toJson(dispenseConfig));
-
-
+		
 	}
 
 	private Object convertToFull(Object object) {
 		return object == null ? null : ConversionUtil.convertToRepresentation(object, Representation.FULL);
 	}
 
+	private Object convertToRef(Object object) {
+		return object == null ? null : ConversionUtil.convertToRepresentation(object, Representation.REF);
+	}
 }

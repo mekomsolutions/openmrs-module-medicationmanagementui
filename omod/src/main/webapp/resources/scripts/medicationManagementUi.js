@@ -7,19 +7,25 @@ angular.module('MedicationManagementUI.main', ['orderService', 'encounterService
 	$scope.careSetting = $scope.config.intialCareSetting ?
 	_.findWhere(config.careSettings, { uuid: config.intialCareSetting }) :
 	$scope.config.careSettings[0];
+	$scope.hasActiveVisit = $scope.config.activeVisit == null ? false : true;
 
-	$scope.buildAddOrderUrl = function() {		
-		$scope.config.addOrderUrl = $scope.config.orderEntryUiUrl + "&mode=new" + "&skipDispense=true" + "&careSetting=" + $scope.careSetting.uuid
-		if ($scope.config.activeVisit) {
-			$scope.config.addOrderUrl = $scope.config.addOrderUrl.concat('&visit=' + $scope.config.activeVisit.uuid);
+	if ($scope.hasActiveVisit) {
+		$scope.buildAddOrderUrl = function() {		
+			$scope.config.addOrderUrl = $scope.config.orderEntryUiUrl + "&mode=new" + "&skipDispense=true" + "&careSetting=" + $scope.careSetting.uuid
+			if ($scope.config.activeVisit) {
+				$scope.config.addOrderUrl = $scope.config.addOrderUrl.concat('&visit=' + $scope.config.activeVisit.uuid);
+			}
 		}
-	}
-	$scope.buildAddOrderUrl();
+		$scope.buildAddOrderUrl();
+	}	
 
 	$scope.setCareSetting = function(careSetting) {
 		/* TODO confirm dialog or undo functionality if this is going to discard things */
 		$scope.careSetting = careSetting;
-		$scope.buildAddOrderUrl();
+
+		if ($scope.hasActiveVisit) {
+			$scope.buildAddOrderUrl();
+		}
 	}
 
 }])
@@ -124,7 +130,9 @@ angular.module('MedicationManagementUI.main', ['orderService', 'encounterService
 		}
 
 		function setReviseUrl (order) {
-			order.reviseUrl = $scope.config.orderEntryUiUrl + "&order=" + order.uuid + "&mode=revise"  + "&skipDispense=true";
+			if ($scope.hasActiveVisit) {
+				order.reviseUrl = $scope.config.orderEntryUiUrl + "&order=" + order.uuid + "&mode=revise"  + "&skipDispense=true";
+			}
 			return order;
 		}
 

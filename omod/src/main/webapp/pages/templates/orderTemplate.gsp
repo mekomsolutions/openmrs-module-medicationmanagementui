@@ -1,3 +1,16 @@
+<style type="text/css">
+
+	.disabled {
+		color: #dddddd;
+		pointer-events: none;
+	}
+
+	a {
+		cursor:pointer;
+	}
+
+</style>
+
 <div>
 	<table  style="border-bottom: 3px solid #00463f;">
 		<tr title="Click to get more details" style="height:40px">
@@ -17,18 +30,20 @@
 
 			<td style="width:1%;white-space:nowrap; text-align:right;" ng-show="order.isActive()">
 				<div>
-					<a ng-href="{{order.reviseUrl}}" ng-click="loading=true" title="Revise"  >
+					<a ng-class="{'disabled':!hasActiveVisit}" ng-href="{{order.reviseUrl}}" ng-click="loading=true" title="Revise"  >
 						<i class="icon-pencil"></i>
 					</a>
 
-					<a ng-click="showDispense()" title="Dispense" style="" >
+					<a ng-click="showDispense()" title="Dispense" >
 						<i class="icon-external-link"></i>
 					</a>
 
 					<a ng-hide="discontinue.loading" title="Discontinue" ng-click="discontinueOrder()">
 						<i class="icon-remove"></i>
 					</a>
-					<span ng-show="discontinue.loading"><img src="${ ui.resourceLink("uicommons", "images/spinner.gif") }" width="23px" /></span>
+					<span ng-show="discontinue.loading">
+						<img src="${ ui.resourceLink("uicommons", "images/spinner.gif") }" width="23px" ></img>
+					</span>
 				</div>
 			</td>
 		</tr>

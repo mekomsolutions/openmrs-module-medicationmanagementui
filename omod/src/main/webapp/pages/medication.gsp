@@ -43,12 +43,24 @@ ui.includeCss("medicationmanagementui", "medication.css")
 	];
 
 	window.OpenMRS = window.OpenMRS || {};
-	window.orderConfig = ${ jsonConfig };
+	window.orderConfig = ${ orderConfig };
 
 	window.dispenseConfig = ${ dispenseConfig };
 
 </script>
 
+
+<style type="text/css">
+	
+	.task.button {
+		min-width: 50px!important
+	}
+
+	.disabled {
+		pointer-events: none;
+	}
+
+</style>
 
 <div ng-app="MedicationManagementUI.main">
 
@@ -67,7 +79,7 @@ ui.includeCss("medicationmanagementui", "medication.css")
 				<div style="clear: both;"></div>
 				<div style="margin-top: 15px;margin-left:2px;font-weight: bold">
 					<% if (context.hasPrivilege("App: orderentryui.drugOrders")) { %>
-					<a ng-if="config.activeVisit"  ng-href="{{config.addOrderUrl}}">
+					<a ng-class="{'disabled':!hasActiveVisit, button:true, task:true}"  ng-href="{{config.addOrderUrl}}">
 						Add
 						<i class="icon-plus-sign"></i>
 					</a>
