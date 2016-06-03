@@ -72,8 +72,6 @@ public class MedicationManagementUIActivator implements ModuleActivator {
 		// enable orderentryui widget
 		service.enableExtension("orderentryui.patientDashboard.activeDrugOrders");
 		
-		
-		
 		log.info("Medication Management UI Module stopped");
 	}
 		
