@@ -35,7 +35,7 @@ angular.module('MedicationManagementUI.order',[])
 					var encounterContext = {
 						patient: scope.config.patient,
 						encounterType: scope.config.drugOrderEncounterType,
-						location: null,
+						location: scope.config.location,
 						visit: scope.config.visit
 					};
 

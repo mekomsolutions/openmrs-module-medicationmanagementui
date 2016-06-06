@@ -79,10 +79,11 @@ ui.includeCss("medicationmanagementui", "medication.css")
 				<div style="clear: both;"></div>
 				<div style="margin-top: 15px;margin-left:2px;font-weight: bold">
 					<% if (context.hasPrivilege("App: orderentryui.drugOrders")) { %>
-					<a ng-class="{'disabled':!hasActiveVisit, button:true, task:true}"  ng-href="{{config.addOrderUrl}}">
+					<a ng-class="{'disabled':!config.activeVisit, button:true, task:true}"  ng-href="{{config.addOrderUrl}}">
 						Add
 						<i class="icon-plus-sign"></i>
 					</a>
+					<span ng-if="!config.activeVisit">No active visit for this patient</span>
 					<% } %>
 				</div>
 

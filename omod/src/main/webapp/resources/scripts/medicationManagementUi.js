@@ -7,9 +7,8 @@ angular.module('MedicationManagementUI.main', ['orderService', 'encounterService
 	$scope.careSetting = $scope.config.intialCareSetting ?
 	_.findWhere(config.careSettings, { uuid: config.intialCareSetting }) :
 	$scope.config.careSettings[0];
-	$scope.hasActiveVisit = $scope.config.activeVisit == null ? false : true;
 
-	if ($scope.hasActiveVisit) {
+	if ($scope.config.activeVisit) {
 		$scope.buildAddOrderUrl = function() {		
 			$scope.config.addOrderUrl = $scope.config.orderEntryUiUrl + "&mode=new" + "&skipDispense=true" + "&careSetting=" + $scope.careSetting.uuid
 			if ($scope.config.activeVisit) {
@@ -130,7 +129,7 @@ angular.module('MedicationManagementUI.main', ['orderService', 'encounterService
 		}
 
 		function setReviseUrl (order) {
-			if ($scope.hasActiveVisit) {
+			if ($scope.config.activeVisit) {
 				order.reviseUrl = $scope.config.orderEntryUiUrl + "&order=" + order.uuid + "&mode=revise"  + "&skipDispense=true";
 			}
 			return order;

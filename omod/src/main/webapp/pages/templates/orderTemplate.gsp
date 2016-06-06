@@ -30,7 +30,7 @@
 
 			<td style="width:1%;white-space:nowrap; text-align:right;" ng-show="order.isActive()">
 				<div>
-					<a ng-class="{'disabled':!hasActiveVisit}" ng-href="{{order.reviseUrl}}" ng-click="loading=true" title="Revise"  >
+					<a ng-class="{'disabled':!config.activeVisit}" ng-href="{{order.reviseUrl}}" ng-click="loading=true" title="Revise"  >
 						<i class="icon-pencil"></i>
 					</a>
 
