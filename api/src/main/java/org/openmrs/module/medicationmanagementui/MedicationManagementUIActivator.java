@@ -10,69 +10,93 @@
 package org.openmrs.module.medicationmanagementui;
 
 
-import org.apache.commons.logging.Log; 
+import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.GlobalProperty;
+import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.ModuleActivator;
 import org.openmrs.module.appframework.service.AppFrameworkService;
+import org.openmrs.module.emrapi.adt.EmrApiVisitAssignmentHandler;
+import org.openmrs.module.medicationmanagementui.adt.MedicationManagementUIVisitAssignmentHandler;
+import org.openmrs.util.OpenmrsConstants;
 
 /**
  * This class contains the logic that is run every time this module is either started or stopped.
  */
 public class MedicationManagementUIActivator implements ModuleActivator {
-	
+
 	protected Log log = LogFactory.getLog(getClass());
-		
+
 	/**
 	 * @see ModuleActivator${symbol_pound}willRefreshContext()
 	 */
 	public void willRefreshContext() {
 		log.info("Refreshing Medication Management UI Module");
 	}
-	
+
 	/**
 	 * @see ModuleActivator${symbol_pound}contextRefreshed()
 	 */
 	public void contextRefreshed() {
 		log.info("Medication Management UI Module refreshed");
 	}
-	
+
 	/**
 	 * @see ModuleActivator${symbol_pound}willStart()
 	 */
 	public void willStart() {
 		log.info("Starting Medication Management UI Module");
 	}
-	
+
 	/**
 	 * @see ModuleActivator${symbol_pound}started()
 	 */
 	public void started() {
-		
+
 		AppFrameworkService service = Context.getService(AppFrameworkService.class);
 		// disable orderentryui widget
 		service.disableExtension("orderentryui.patientDashboard.activeDrugOrders");
-		
+
+		// Create global properties
+		AdministrationService administrationService = Context.getAdministrationService();
+		createGlobalProperties(administrationService);
+
 		log.info("Medication Management UI Module started");
 	}
-	
+
 	/**
 	 * @see ModuleActivator${symbol_pound}willStop()
 	 */
 	public void willStop() {
 		log.info("Stopping Medication Management UI Module");
 	}
-	
+
 	/**
 	 * @see ModuleActivator${symbol_pound}stopped()
 	 */
 	public void stopped() {
-		
+
 		AppFrameworkService service = Context.getService(AppFrameworkService.class);
 		// enable orderentryui widget
 		service.enableExtension("orderentryui.patientDashboard.activeDrugOrders");
-		
+
 		log.info("Medication Management UI Module stopped");
 	}
-		
+
+	private void createGlobalProperties(AdministrationService administrationService) {
+
+
+
+		// When https://tickets.openmrs.org/browse/TRUNK-3773 is resolved, refactor this to refer to a bean by id
+		GlobalProperty gp = administrationService.getGlobalPropertyObject(OpenmrsConstants.GP_VISIT_ASSIGNMENT_HANDLER);
+		if (gp == null) {
+			gp = new GlobalProperty();
+			gp.setProperty(OpenmrsConstants.GP_VISIT_ASSIGNMENT_HANDLER);
+		}
+		// Global property to set the Visit Assignment Handler 
+		gp.setPropertyValue(MedicationManagementUIVisitAssignmentHandler.class.getName());
+		administrationService.saveGlobalProperty(gp);
+	}
+
 }

@@ -34,11 +34,11 @@
 						<i class="icon-pencil"></i>
 					</a>
 
-					<a ng-click="showDispense()" title="Dispense" >
+					<a ng-class="{'disabled':!config.activeVisit}" ng-click="showDispense()" title="Dispense" >
 						<i class="icon-external-link"></i>
 					</a>
 
-					<a ng-hide="discontinue.loading" title="Discontinue" ng-click="discontinueOrder()">
+					<a ng-class="{'disabled':!config.activeVisit}" ng-hide="discontinue.loading" title="Discontinue" ng-click="discontinueOrder()">
 						<i class="icon-remove"></i>
 					</a>
 					<span ng-show="discontinue.loading">

@@ -83,7 +83,7 @@ ui.includeCss("medicationmanagementui", "medication.css")
 						Add
 						<i class="icon-plus-sign"></i>
 					</a>
-					<span ng-if="!config.activeVisit">No active visit for this patient</span>
+					<em ng-if="!config.activeVisit"><i class="icon-info-sign"></i> No active visit for this patient</em>
 					<% } %>
 				</div>
 
@@ -102,7 +102,7 @@ ui.includeCss("medicationmanagementui", "medication.css")
 				</ul>
 
 				<div ng-hide="!(pastDrugOrders | careSetting:careSetting | filter:nameText).length" style="margin-top: 30px">
-					<a ng-click="showInactive=true" ng-hide="showInactive">Show discontinued and completed <i class="icon-info-sign"></i></a>
+					<a ng-click="showInactive=true" ng-hide="showInactive">Show discontinued and completed <i class="icon-plus-sign"></i></a>
 				</div>
 				<div ng-show="showInactive">
 					<h3 style="margin-top: 40px">Inactive orders</h3>

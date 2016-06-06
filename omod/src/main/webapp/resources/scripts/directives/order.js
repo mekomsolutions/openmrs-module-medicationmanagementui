@@ -36,7 +36,7 @@ angular.module('MedicationManagementUI.order',[])
 						patient: scope.config.patient,
 						encounterType: scope.config.drugOrderEncounterType,
 						location: scope.config.location,
-						visit: scope.config.visit
+						visit: null
 					};
 
 					scope.discontinue = {loading : "true"};
